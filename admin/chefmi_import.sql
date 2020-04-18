@@ -21,6 +21,7 @@ CREATE TABLE platos(
     id_plato INT NOT NULL AUTO_INCREMENT,
     id_tipo INT NOT NULL,
     nombre varchar(60) NOT NULL,
+    descripcion varchar(60) NOT NULL,
     ingredientes TEXT NOT NULL,
     preparacion TEXT NOT NULL,
     imagen TEXT NOT NULL,
@@ -38,6 +39,6 @@ INSERT INTO tipos (nombre) VALUES ("Carnes");
 INSERT INTO tipos (nombre) VALUES ("Pescados");
 INSERT INTO tipos (nombre) VALUES ("Vegetarianos");
 INSERT INTO tipos (nombre) VALUES ("Veganos");
-INSERT INTO platos (id_tipo, nombre, ingredientes, preparacion, imagen, dificultad, tiempo) VALUES (1,"Test","ingredientes","pasos","",1,20)
+INSERT INTO platos (id_tipo, nombre, descripcion, ingredientes, preparacion, imagen, dificultad, tiempo) VALUES (1,"Test", "Esto es un plato de ejemplo", "ingredientes","pasos","SILO.png",1,20)
 
 -- Carnes Entrantes Pescados Postres Vegetarianos Veganos Basicos

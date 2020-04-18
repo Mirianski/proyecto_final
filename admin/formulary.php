@@ -3,7 +3,12 @@
         <form action="addRecipes.php" method="post" enctype="multipart/form-data">
             <div>
                 <label for="name">Nombre de la receta:</label></br>
-                <input type="text" id="name" name="name" required/>
+                <input type="text" id="name" name="name" required />
+            </div>
+
+            <div>
+                <label for="description">Descripción:</label></br>
+                <textarea rows="7" id="description" name="description" placeholder="Desriba brevemente en qué consiste el plato" required></textarea>
             </div>
 
             <div id="middleForm">
@@ -11,7 +16,7 @@
                     <label for="type">Tipo de Receta:</label></br>
                     <select name="type" id="type" required>
                         <option>Seleccionar</option>
-                        <?php echo $tipos_options;?>
+                        <?php echo $tipos_options; ?>
                     </select>
                 </div>
 
@@ -26,16 +31,16 @@
             </div>
             <div>
                 <label for="image">Imagen:</label></br>
-                <input type="file" name="imagen" id="imagen">
+                <input type="file" name="image" id="image">
             </div>
             <div>
-                <label for="image">Tiempo (min):</label></br>
-                <input type="number" name="tiempo" required/>
+                <label for="time">Tiempo (min):</label></br>
+                <input type="number" name="time" required />
             </div>
-            
+
             <div>
-                <label for="image">Dificultad (1 - 5):</label></br>
-                <input type="number" name="dificultad" required/>
+                <label for="difficulty">Dificultad (1 - 5):</label></br>
+                <input type="number" name="difficulty" required />
             </div>
             <input type="submit" id="sendFormulary" value="Crear receta" />
         </form>

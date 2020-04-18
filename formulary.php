@@ -7,7 +7,7 @@
 <body>
 
     <?php
-    include('Static.html');
+    include('static.html');
     ?>
     <div id="formulary">
         <h1>¡Envía tu receta!</h1>

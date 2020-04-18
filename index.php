@@ -1,7 +1,7 @@
 <html>
 <head>
 <?php
-include('Static.html');
+include('static.html');
 ?>
 </head>
 
