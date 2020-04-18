@@ -5,27 +5,26 @@
     <meta lang="es">
     <title>Blog de Chef'Mi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
 <body>
-    <div id="cabecera">
-    </div>
+    <div id="cabecera"></div>
     <nav class="menuDesplegable">
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#">Recetas</a>
-                <ul class="menuRecipes">
-                    <li><a href="recetas?tipo=1">Entrantes</a></li>
-                    <li><a href="#">Pescados</a></li>
-                    <li><a href="recetas?tipo=4">Carnes</a></li>
-                    <li><a href="#">Postres</a></li>
-                    <li><a href="#">Vegetarianos</a></li>
-                    <li><a href="#">Veganos</a></li>
-                    <li><a href="#">Básicos</a></li>
-                </ul>
+        <ul class="flex">
+            <li class="mr-6">
+                <a class="text-blue-500 hover:text-blue-800" href="#">Inicio</a>
             </li>
-            <li><a href="formulary.php">Envía tus recetas</a></li>
+            <li class="mr-6 dropdown">
+                <a class="text-blue-500 hover:text-blue-800" href="recetas/index.php">Recetas</a>
+                <div class="dropdown-content">
+                    <?php echo $tipos_li; ?>
+                </div>
+            </li>
+            <li class="mr-6">
+                <a class="text-blue-500 hover:text-blue-800" href="formulary.php">Envía tus recetas</a>
+            </li>
         </ul>
     </nav>
     <div class="social">
@@ -35,6 +34,3 @@
             <li><a href="http://www.pinterest.com/mirianski" target="_blank" class="icon-pinterest"><img src="images/pinterest.svg" height="25" width="25" alt="Imagen_1"></a></li>
         </ul>
     </div>
-</body>
-
-</html>

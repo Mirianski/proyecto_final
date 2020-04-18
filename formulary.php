@@ -1,13 +1,5 @@
-<html>
-
-<head>
-
-</head>
-
-<body>
-
     <?php
-    include('static.html');
+    include('static.php');
     ?>
     <div id="formulary">
         <h1>¡Envía tu receta!</h1>
