@@ -61,14 +61,6 @@
      
 
    }
-
-   $db = new mysqli("localhost", "root", "uniroot", "chefmi");
-   $db->set_charset("UTF8");
-
-   if ($db->connect_error) {
-      var_dump($db->connect_error);
-      die;
-   }
 ?>
 
 
