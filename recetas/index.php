@@ -120,7 +120,7 @@ if (!isset($_GET["tipo"]) && !isset($_GET["receta"])) {
                 <img class="max-w-sm m-2" src="../uploads/<?php echo $plato["imagen"]; ?>">
             </div>
         </div>
-        <div class="block text-center px-4 py-2 mt-2">
+        <div class="block px-4 py-2 mt-2">
             <div class="text-gray-700 px-4 py-2 m-4">
                 <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2">Categoría: <?php echo $tipo["nombre"]; ?></span>
                 <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2">Tiempo: <?php echo $plato["tiempo"]; ?> min</span>
