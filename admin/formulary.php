@@ -3,7 +3,7 @@
         <form action="addRecipes.php" method="post" enctype="multipart/form-data">
             <div>
                 <label for="name">Nombre de la receta:</label></br>
-                <input type="text" id="name" name="name" required />
+                <input type="text" id="name" name="name" required maxlength="60"/>
             </div>
 
             <div>

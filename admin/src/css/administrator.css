@@ -55,7 +55,8 @@ h2{
     display: flex;
     list-style: none;
     justify-content: center;
-    background-color: #cfcfcf;
+    background-color: #fff8ee
+;
 
 }
 .menuDesplegable a {
@@ -72,7 +73,8 @@ h2{
 
 .menuDesplegable a:hover {
     background-color: rgb(66, 37, 23);
-    color: #cfcfcf;
+    color: #fff8ee
+;
     
 }
 .menuDesplegable ul li ul {

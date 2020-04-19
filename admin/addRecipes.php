@@ -31,7 +31,9 @@
       $file_size =$_FILES['image']['size'];
       $file_tmp =$_FILES['image']['tmp_name'];
       $file_type=$_FILES['image']['type'];
-      $file_ext=strtolower(end(explode('.',$_FILES['image']['name'])));
+      $aux = explode('.',$file_name);
+      $aux = end($aux);
+      $file_ext=strtolower($aux);
 
       $extensions= array("jpeg","jpg","png");
       if(in_array($file_ext,$extensions)=== false){
@@ -43,16 +45,15 @@
 
       if(empty($errors)==true) {
          move_uploaded_file($file_tmp,$target_dir.$file_name);
-         // echo "The file ". basename( $_FILES["imagen"]["name"]). " has been uploaded.";
 
          $insert_query = "INSERT INTO platos (id_tipo, nombre, descripcion, ingredientes, preparacion, imagen, dificultad, tiempo) 
          VALUES (".(INT)$_POST["type"].",'".$_POST["name"]."', '".$_POST["description"]."','".nl2br($_POST["ingredients"])."','".nl2br($_POST["steps"])."','".$file_name."',
          ".(INT)$_POST["difficulty"].",".(INT)$_POST["time"].")";
          $result = $db->query($insert_query);
+
          if($result){
             header("Location:addRecipes.php", true);
          }
-
       }else{
          print_r($errors);
       }
@@ -109,7 +110,7 @@
             }
          } else {
             // Listado recetas
-            $tabla_recetas = '<table class="table-auto" id="admin-table"><tr><th class="px-4 py-2">Nombre</th><th class="px-4 py-2">Tipo</th><th class="px-4 py-2">Duración</th><th class="px-4 py-2">Difdicultad</th></tr>';
+            $tabla_recetas = '<div class="w-8/12 mx-auto p-8 px-4"><table class="table-auto" id="admin-table"><tr><th class="px-4 py-2">Nombre</th><th class="px-4 py-2">Tipo</th><th class="px-4 py-2">Duración</th><th class="px-4 py-2">Difdicultad</th></tr>';
             $query = "SELECT * FROM platos";
             if ($resultado = $db->query($query)) {
                 if($resultado->num_rows > 0){
@@ -121,7 +122,7 @@
                         }
                      }
                   }
-                  $tabla_recetas .= '</table>';
+                  $tabla_recetas .= '</table></div>';
                   echo $tabla_recetas;
                 }else{
                   echo "No se ha encontrado ningúna receta.";
