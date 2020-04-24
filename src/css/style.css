@@ -204,25 +204,32 @@ body{
     color:red;
 }
 
+#admin-table.dataTable.stripe tbody tr.odd td.sorting_1{
+    background-color: #ebe3d9;
+}
+#admin-table.dataTable.stripe tbody tr.even td.sorting_1{
+    background-color: #a7988d;
+}
+#admin-table.dataTable.stripe tbody tr.odd{
+    background-color: #fff8ee;
+}
+#admin-table.dataTable.stripe tbody tr.even{
+    background-color: #bbab9f;
+}
+#admin-table.dataTable thead {
+    background-color: rgb(66, 37, 23);
+    color: #fff8ee;
+}
+#admin-table.dataTable.cell-border tbody tr td{
+    border-left-color: rgb(66, 37, 23);
+}
+
+#admin-table_filter input, #admin-table_length select{
+    border: solid 1px #bbab9f;
+    margin: 10px
+}
+
 .current_page{
     background-color: #4c2721;
     color: #fff8ee;
 }
-.table.dataTable.stripe tbody tr.odd{
-    background-color: #f9f9f9;
-}
-.table.dataTable.stripe tbody tr.even{
-    background-color: #f9f9f9;
-}
-.table.dataTable thead {
-    background-color: #f9f9f9;
-}
-.table.dataTable.cell-border tbody tr td{
-    border-left-color: darkviolet ;
-}
-
-
-
-
-
-
