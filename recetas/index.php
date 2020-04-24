@@ -44,13 +44,13 @@ if (!isset($_GET["receta"])) :
         $_POST['total'] = round($count / $per_page);
         if($count / $per_page > round($count / $per_page)) $_POST['total'] ++;
     } else {
-        if ($_POST['pageq'] == '<' && $_POST['page'] > 2) {
+        if (isset($_POST['pageq']) && $_POST['pageq'] == '<' && $_POST['page'] > 2) {
             $_POST['page']--;
-        } else if ($_POST['pageq'] == '>' && $_POST['page'] < $_POST['total']) {
+        } else if (isset($_POST['pageq']) && $_POST['pageq'] == '>' && $_POST['page'] < $_POST['total']) {
             $_POST['page']++;
-        } else if ($_POST['pageq'] == '<<') {
+        } else if (isset($_POST['pageq']) && $_POST['pageq'] == '<<') {
             $_POST['page'] = 1;
-        } else if ($_POST['pageq'] == '>>') {
+        } else if (isset($_POST['pageq']) && $_POST['pageq'] == '>>') {
             $_POST['page'] = $_POST['total'];
         }
         $page = $_POST['page'];
@@ -83,9 +83,9 @@ if (!isset($_GET["receta"])) :
         <div class="w-8/12 mx-auto p-8 px-4">
             <?php if (isset($platos)) foreach ($platos as $plato) : ?>
                 <a href="?receta=<?php echo $plato["id_plato"]; ?>">
-                    <div class="w-full h-58 lg:flex m-3">
-                        <div class="h-58 w-48 bg-cover" style="background-image: url('../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>')"></div>
-                        <div style="background-color:#fff8ee" class="h-58 border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex-1 justify-between leading-normal">
+                    <div class="w-full h-48 lg:flex m-3">
+                        <div class="h-48 w-48 bg-cover" style="background-image: url('../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>')"></div>
+                        <div style="background-color:#fff8ee" class="h-48 border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex-1 justify-between leading-normal">
                             <div class="mb-8">
                                 <div class="font-bold text-xl mb-2"><?php echo $plato["nombre"]; ?></div>
                                 <p class="text-gray-700 text-base">
@@ -116,7 +116,7 @@ if (!isset($_GET["receta"])) :
     <input type="hidden" name="page" value="<?php echo $_POST['page']; ?>">
 
 
-    <?php if ($_POST['total'] && $_POST['total'] > 1) :?>
+    <?php if (isset($_POST['total']) &&  $_POST['total'] && $_POST['total'] > 1) :?>
         <div class="text-center text-xl  w-8/12 mx-auto p-8 px-4">
             <input class="p-2" type="submit" name="pageq" value="<<">
             <input class="p-2" type="submit" name="pageq" value="<">
