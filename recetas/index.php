@@ -85,19 +85,19 @@ if (!isset($_GET["receta"])) :
                 <a href="?receta=<?php echo $plato["id_plato"]; ?>">
                     <div class="w-full h-48 lg:flex m-3">
                         <div class="h-48 w-48 bg-cover" style="background-image: url('../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>')"></div>
-                        <div style="background-color:#fff8ee" class="h-48 border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex-1 justify-between leading-normal">
-                            <div class="mb-8">
+                        <div style="background-color:#fff8ee" class="h-48 relative  border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex-1 justify-between leading-normal">
+                            <div class="">
                                 <div class="font-bold text-xl mb-2"><?php echo $plato["nombre"]; ?></div>
                                 <p class="text-gray-700 text-base">
                                     <?php echo $plato["descripcion"]; ?>
                                 </p>
                             </div>
-                            <div class="flex items-center float-left m-2">
+                            <div class="flex items-center float-left m-2 absolute bottom-0 left-0">
                                 <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
                                     <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" />
                                 <?php endforeach; ?>
                             </div>
-                            <div class="flex items-center float-right m-2">
+                            <div class="flex items-center float-right m-2 absolute bottom-0 right-0">
                                 <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2">Categoría: <?php echo $plato["tipo"]; ?></span>
                                 <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2">Tiempo: <?php echo $plato["tiempo"]; ?> min</span>
                                 <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2">Dificultad: <?php echo $plato["dificultad"]; ?>/5</span>
