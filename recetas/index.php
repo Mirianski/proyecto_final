@@ -53,7 +53,8 @@ if (!isset($_GET["receta"])) :
         } else if (isset($_POST['pageq']) && $_POST['pageq'] == '>>') {
             $_POST['page'] = $_POST['total'];
         }
-        $page = $_POST['page'];
+		
+        $page = isset($_POST['page'])? (int)$_POST['page']: 1;
     }
 
     $from = ($page - 1) * $per_page;
