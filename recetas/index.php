@@ -53,7 +53,7 @@ if (!isset($_GET["receta"])) :
         } else if (isset($_POST['pageq']) && $_POST['pageq'] == '>>') {
             $_POST['page'] = $_POST['total'];
         }
-        $page = $_POST['page'];
+        $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
     }
 
     $from = ($page - 1) * $per_page;
@@ -111,17 +111,14 @@ if (!isset($_GET["receta"])) :
     <?php endif; ?>
 
     <input type="hidden" name="total" value="<?php echo $_POST['total']; ?>">
-    <input type="hidden" name="state_id" value="<?php echo $_POST['state_id']; ?>">
-    <input type="hidden" name="state" value="<?php echo $_POST['state']; ?>">
-    <input type="hidden" name="page" value="<?php echo $_POST['page']; ?>">
-
+    <input type="hidden" name="page" value="<?php echo isset($_POST['page']) ? (int)$_POST['page'] : 1; ?>">
 
     <?php if (isset($_POST['total']) &&  $_POST['total'] && $_POST['total'] > 1) :?>
         <div class="text-center text-xl  w-8/12 mx-auto p-8 px-4">
             <input class="p-2" type="submit" name="pageq" value="<<">
             <input class="p-2" type="submit" name="pageq" value="<">
             <?php for ($i = 1; $i <= $_POST['total']; $i++) : ?>
-                <input class="p-2 <?php if($_POST['page'] == $i || !$_POST['page'] && $i == 1) echo 'current_page';?>" type="submit" name="page" value="<?php echo $i; ?>">
+                <input class="p-2 <?php if(isset($_POST['page']) && $_POST['page'] == $i || !isset($_POST['page']) && $i == 1) echo 'current_page';?>" type="submit" name="page" value="<?php echo $i; ?>">
             <?php endfor; ?>
             <input class="p-2" type="submit" name="pageq" value=">">
             <input class="p-2" type="submit" name="pageq" value=">>">
