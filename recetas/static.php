@@ -5,8 +5,8 @@
     <meta lang="es">
     <title>Blog de Chef'Mi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
+    <link rel="stylesheet" href="../src/css/style.css" type="text/css">
 </head>
 
 <body>
@@ -29,8 +29,8 @@
     </nav>
     <div class="social">
         <ul>
-            <li><a href="http://www.twitter.com/mirianski93" target="_blank" class="icon-twitter"><img src="../images/twitter.svg" height="25" width="25" alt="Imagen_1"></a></li>
-            <li><a href="http://www.instagram.com/mirianski" target="_blank" class="icon-instagram"><img src="../images/instagram.svg" height="25" width="25" alt="Imagen_1"></a></li>
-            <li><a href="http://www.pinterest.com/mirianski" target="_blank" class="icon-pinterest"><img src="../images/pinterest.svg" height="25" width="25" alt="Imagen_1"></a></li>
+            <li><a href="http://www.twitter.com/mirianski93" target="_blank" class="icon-twitter"><img src="../src/images/twitter.svg" height="25" width="25" alt="Imagen_1"></a></li>
+            <li><a href="http://www.instagram.com/mirianski" target="_blank" class="icon-instagram"><img src="../src/images/instagram.svg" height="25" width="25" alt="Imagen_1"></a></li>
+            <li><a href="http://www.pinterest.com/mirianski" target="_blank" class="icon-pinterest"><img src="../src/images/pinterest.svg" height="25" width="25" alt="Imagen_1"></a></li>
         </ul>
     </div>

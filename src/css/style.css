@@ -4,7 +4,7 @@ body{
     background-color: #bbab9f;
 }
 #cabecera {
-    background: url('images/cabecera.png') center no-repeat;
+    background: url('../images/cabecera.png') center no-repeat;
     width: 100%;
     height: 200px;
     background-color: #bbab9f;
@@ -41,7 +41,7 @@ body{
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: #fff8ee;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -154,4 +154,75 @@ body{
 .carousel-caption{
     background-color: rgba(0, 0, 0, 0.7);
 }
+
+
+
+/* ADMIN */
+#inicioSesion{
+    width: 60%;
+    align-items: center;
+}
+#mensaje-error{
+    color:red;
+}
+.session{
+    margin: auto;
+    padding-left: 200px;
+    padding-right: 200px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    display: table;
+    text-align: center;
+    border-style: double;
+    border-color: white;
+}
+.session label{
+    font-size: 20px;
+
+}
+.session input{
+    border-radius: 15px;   
+    width: 100%;
+    padding: 5px;
+    margin: 10px;
+    
+    
+}
+#adminBar{
+    background-color: rgb(66, 37, 23);;
+    color: white;
+    font-family: sans-serif;
+    width: 100%;
+    text-align: center;
+    font-weight: lighter;
+}
+#inicioSesion{
+    width: 60%;
+    align-items: center;
+}
+#mensaje-error{
+    color:red;
+}
+
+.current_page{
+    background-color: #4c2721;
+    color: #fff8ee;
+}
+.table.dataTable.stripe tbody tr.odd{
+    background-color: #f9f9f9;
+}
+.table.dataTable.stripe tbody tr.even{
+    background-color: #f9f9f9;
+}
+.table.dataTable thead {
+    background-color: #f9f9f9;
+}
+.table.dataTable.cell-border tbody tr td{
+    border-left-color: darkviolet ;
+}
+
+
+
+
+
 
