@@ -160,5 +160,9 @@ INSERT INTO `platos` VALUES (24,5,'Merluza al horno a las finas hierbas','La mer
 INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (1, 2);
 INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (2, 2);
 INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (1, 3);
+INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (1, 23);
+INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (2, 23);
+INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (3, 23);
+INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (4, 23);
 
 -- Carnes Entrantes Pescados Postres Vegetarianos Veganos Basicos
