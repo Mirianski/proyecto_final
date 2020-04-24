@@ -1,10 +1,13 @@
 <?php
-$db = new mysqli("localhost", "root", "", "chefmi");
+//Conexión con la base de datos
+$db = new mysqli("localhost", "root", "uniroot", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     var_dump($db->connect_error);
     die;
 }
+
+//Desplegable de los tipos de recetas del menú
 $tipos_li = '';
 $query = "SELECT * FROM tipos";
 if ($resultado = $db->query($query)) {
@@ -17,17 +20,12 @@ if ($resultado = $db->query($query)) {
     }
 }
 
+//Obtenemos los platos para el carrusel
 $platos = array();
-$query = "SELECT * FROM platos LIMIT 3";
+$query = "SELECT id_plato, nombre, descripcion, imagen FROM platos ORDER BY id_plato DESC LIMIT 3";
 if ($resultado = $db->query($query)) {
     if ($resultado->num_rows > 0) {
         while ($plato = $resultado->fetch_assoc()) {
-            if ($result = $db->query("SELECT nombre FROM tipos WHERE id_tipo=" . $plato["id_tipo"])) {
-                if ($result->num_rows > 0) {
-                    $tipo = $result->fetch_assoc();
-                    $plato['categoria'] = $tipo['nombre'];
-                }
-            }
             array_push($platos, $plato);
         }
     } else {
@@ -48,11 +46,14 @@ include('static.php');
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
         <?php foreach ($platos as $index => $plato) : ?>
-            <div class="item <?php if($index == 0) echo 'active'; ?>"style=" height:500px; background: url('uploads/<?php echo $plato["imagen"]; ?>') no-repeat fixed; background-size: cover;">
-                <div class="carousel-caption">
-                    <h3><?php echo $plato["nombre"]; ?></h3>
-                    <p><?php echo $plato["descripcion"]; ?></p>
-                </div>
+            <div class="item <?php if ($index == 0) echo 'active'; ?>" style=" height:500px; background: url('uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>') no-repeat fixed; background-size: cover;">
+                <a href="recetas/index.php?receta=<?php echo $plato["id_plato"]; ?>">
+                    <div class="carousel-caption">
+                        <h3><?php echo $plato["nombre"]; ?></h3>
+                        <p><?php echo $plato["descripcion"]; ?></p>
+                    </div>
+                </a>
+
             </div>
         <?php endforeach; ?>
     </div>
