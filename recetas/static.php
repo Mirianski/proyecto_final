@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
     <link rel="stylesheet" href="../src/css/style.css" type="text/css">
+    <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-3.5.0.js"></script>
 </head>
 
 <body>
@@ -25,6 +26,12 @@
             <li class="mr-6">
                 <a class="text-blue-500 hover:text-blue-800" href="../formulary.php">Envía tus recetas</a>
             </li>
+            <li>
+                <div class="buscador">
+                    <input type="text" id="cuadro_busqueda" placeholder="Buscar receta" />
+                    <div id="resultados_busqueda" class="absolute"></div>
+                </div>
+            </li>
         </ul>
     </nav>
     <div class="social">
@@ -34,3 +41,27 @@
             <li><a href="http://www.pinterest.com/mirianski" target="_blank" class="icon-pinterest"><img src="../src/images/pinterest.svg" height="25" width="25" alt="Imagen_1"></a></li>
         </ul>
     </div>
+    <script>
+        $(document).ready(function() {
+            $("#cuadro_busqueda").on('keyup',function() {
+                if($(this).val().length  < 3) return  $("#resultados_busqueda").html();
+                $.ajax({
+                    type: "POST",
+                    url: "../searchRecipes.php",
+                    data: 'keyword=' + $(this).val(),
+                    beforeSend: function() {
+                        $("#cuadro_busqueda").css("background", "#FFF");
+                    },
+                    success: function(data) {
+                        console.log("data", data);
+                        $("#resultados_busqueda").show();
+                        $("#resultados_busqueda").html(data);
+                        $("#cuadro_busqueda").css("background", "#FFF");
+                    }
+                });
+            });
+            $("#cuadro_busqueda").on('blur',function() {
+                $("#resultados_busqueda").html();
+            });
+        });
+    </script>

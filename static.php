@@ -29,6 +29,12 @@
             <li class="mr-6">
                 <a class="text-blue-500 hover:text-blue-800" href="formulary.php">Envía tus recetas</a>
             </li>
+            <li>
+                <div class="buscador">
+                    <input type="text" id="cuadro_busqueda" placeholder="Buscar receta" />
+                    <div id="resultados_busqueda" class="absolute"></div>
+                </div>
+            </li>
         </ul>
     </nav>
     <div class="social">
@@ -38,3 +44,26 @@
             <li><a href="http://www.pinterest.com/mirianski" target="_blank" class="icon-pinterest"><img src="src/images/pinterest.svg" height="25" width="25" alt="Imagen_1"></a></li>
         </ul>
     </div>
+    <script>
+        $(document).ready(function() {
+            $("#cuadro_busqueda").on('keyup',function() {
+                if($(this).val().length  < 3) return  $("#resultados_busqueda").html();
+                $.ajax({
+                    type: "POST",
+                    url: "searchRecipes.php",
+                    data: 'keyword=' + $(this).val(),
+                    beforeSend: function() {
+                        $("#cuadro_busqueda").css("background", "#FFF");
+                    },
+                    success: function(data) {
+                        $("#resultados_busqueda").show();
+                        $("#resultados_busqueda").html(data);
+                        $("#cuadro_busqueda").css("background", "#FFF");
+                    }
+                });
+            });
+            $("#cuadro_busqueda").on('blur',function() {
+                $("#resultados_busqueda").html();
+            });
+        });
+    </script>

@@ -1,5 +1,4 @@
 /*STATIC STYLE*/
-
 body{
     background-color: #bbab9f;
 }
@@ -17,7 +16,6 @@ body{
     list-style: none;
     justify-content: center;
     background-color: #fff8ee;
-
 }
 .menuDesplegable a {
     display: block;
@@ -28,16 +26,11 @@ body{
     text-align: center;
     font-family: 'Gill Sans MT';
     font-size: 18px;
-   
 } 
-
 .menuDesplegable a:hover {
     background-color: rgb(66, 37, 23);
     color: #cfcfcf;
-    
 }
-
-
 .dropdown-content {
     display: none;
     position: absolute;
@@ -46,7 +39,6 @@ body{
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
-  
 .dropdown-content a {
     color: black;
     padding: 12px 16px;
@@ -54,16 +46,34 @@ body{
     display: block;
     text-align: left;
 }
-  
 .dropdown-content a:hover {background-color: rgb(66, 37, 23);}
-  
 .dropdown:hover .dropdown-content {
     display: block;
+}
+#resultados_busqueda{
+    z-index: 9999;
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+}
+#resultados_busqueda ul{
+    display: block;
+}
+#resultados_busqueda ul li:hover{
+    cursor:pointer;
+    background-color: rgb(66, 37, 23);
+    color: #cfcfcf;
+}
+.buscador{
+    position: absolute;
+    right: 0;
+    margin: 5px 5px;
+    border: solid 2px rgb(66, 37, 23);
 }
 
 
 /*SOCIAL MEDIA*/
-
 .social {
     position: fixed; 
     right: 0; 
@@ -88,7 +98,6 @@ body{
 .social ul li .icon-twitter {background: #00abf0;}
 .social ul li .icon-instagram {background:linear-gradient(30deg,#fccc63, #fbad50,#e95950,#cd486b,#8a3ab9,#4c68d7);}
 .social ul li .icon-pinterest {background: #ae181f;}
-    
 .social ul li a:hover {
     padding: 20px 75px;
     margin-left: -90px;
@@ -120,7 +129,6 @@ body{
     padding: 10px;
 
 }
-
 #sendFormulary input{    
     background-color: white;
     width: 30%;
@@ -129,28 +137,27 @@ body{
 }
 
 
+/* CARRUSEL*/
 .gallery {
     background: #EEE;
-  }
-  
-  .gallery-cell {
+}
+.gallery-cell {
     width: 66%;
     height: 200px;
     margin-right: 10px;
     background: #8C8;
     counter-increment: gallery-cell;
-  }
+}
   
-  /* cell number */
-  .gallery-cell:before {
+/* cell number */
+.gallery-cell:before {
     display: block;
     text-align: center;
     content: counter(gallery-cell);
     line-height: 200px;
     font-size: 80px;
     color: white;
-  }
-
+}
 .carousel-caption{
     background-color: rgba(0, 0, 0, 0.7);
 }
@@ -189,7 +196,7 @@ body{
     
 }
 #adminBar{
-    background-color: rgb(66, 37, 23);;
+    background-color: rgb(66, 37, 23);
     color: white;
     font-family: sans-serif;
     width: 100%;
