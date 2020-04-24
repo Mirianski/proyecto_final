@@ -94,7 +94,7 @@ if (!isset($_GET["receta"])) :
                             </div>
                             <div class="flex items-center float-left m-2 absolute bottom-0 left-0">
                                 <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
-                                    <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" />
+                                    <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>"/>
                                 <?php endforeach; ?>
                             </div>
                             <div class="flex items-center float-right m-2 absolute bottom-0 right-0">
@@ -156,7 +156,7 @@ if (!isset($_GET["receta"])) :
             <div class="text-center text-5xl">
                 <h1><?php echo $plato["nombre"]; ?><div class="flex items-center float-right m-2">
                         <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
-                            <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" />
+                            <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>"/>
                         <?php endforeach; ?>
                     </div>
                 </h1>
