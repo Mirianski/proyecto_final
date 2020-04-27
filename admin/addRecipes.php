@@ -8,7 +8,7 @@ if (!isset($_SESSION["admin_login"])) header("Location:index.php", true);
 $error = '';
 
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "uniroot", "chefmi");
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
    var_dump($db->connect_error);
@@ -93,6 +93,7 @@ if (isset($_POST["nombre"])) {
    <nav class="menuDesplegable">
       <ul>
          <li class="mr-6"><a href="addRecipes.php">Listado de recetas</a></li>
+         <li class="mr-6"><a href="?recetas_pendientes=1">Listado de recetas pendientes</a></li>
          <li class="mr-6"><a href="?nueva_receta=1">Nueva receta</a></li>
          <li class="mr-6"><a href="../index.php" target="_blank">Blog</a></li>
          <li class="mr-6"><a href="?cerrar_session=1">Cerrar sesión</a></li>
@@ -124,22 +125,98 @@ if (isset($_POST["nombre"])) {
                $error = "";
             }
          }
-      } else {
+      } else if (isset($_GET["recetas_pendientes"])) {
+         $tabla_recetas = '<div class="w-8/12 mx-auto p-8 px-4 m-5" style="background-color:#fff8ee">
+         <table class="table-auto cell-border compact stripe hover order-column" id="admin-table">
+            <thead>
+               <tr>
+                  <th class="px-4 py-2">Nombre</th> <th class="px-4 py-2">Tipo</th> <th class="px-4 py-2">Duración</th> <th class="px-4 py-2">Dificultad</th> <th class="px-4 py-2">Acción</th> 
+               </tr>
+            </thead>
+            <tbody>
+         ';
+         $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE estado = FALSE";
+         if ($resultado = $db->query($query)) {
+            if ($resultado->num_rows > 0) {
+               while ($plato = $resultado->fetch_assoc()) {
+                  $tabla_recetas .= '<tr><td class="border px-4 py-2">' . $plato["nombre"] . '</td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td>
+                  <td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
+                  <td><a href="?editar_receta='.$plato["id_plato"].'">Editar</a><br><a href="?publicar_receta='.$plato["id_plato"].'">Publicar</a><br><a href="#" onclick="confirmacion('.$plato["id_plato"].')">Eliminar</a></td></tr>';
+               }
+               $tabla_recetas .= '
+                     </tbody>
+                  </table>
+               </div>';
+               echo $tabla_recetas;
+            } else {
+               echo "No se ha encontrado ningúna receta.";
+            }
+         }
+      } else if (isset($_GET["editar_receta"])) {
+
+         $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo 
+         FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE id_plato='".$_GET["editar_receta"]."'";
+
+         if ($plato = $db->query($query)) {
+            if ($plato->num_rows > 0) {
+               $plato = $plato->fetch_assoc();
+               $tipos_options = '';
+               if ($tipos = $db->query("SELECT * FROM tipos")) {
+                  if ($tipos->num_rows > 0) {
+
+                     while ($tipo = $tipos->fetch_assoc()) {
+                        if($plato['tipo'] == $tipo['nombre']) $tipos_options .= '<option value=' . $tipo['id_tipo'] . ' selected>' . $tipo['nombre'] . '</option>';
+                        else $tipos_options .= '<option value=' . $tipo['id_tipo'] . '>' . $tipo['nombre'] . '</option>';
+                     }
+
+                     $etiquetas_checkboxes = '';
+                     // $plato_etiquetas = $db->query('SELECT id_etiqueta FROM etiquetas_platos WHERE id_plato ="'.$plato['id_plato'].'"'));
+                     // if ($plato_etiquetas->num_rows > 0) {
+                        
+                     //    $plato_etiquetas
+                     // }else $plato_etiquetas = array();
+
+                     if ($etiquetas = $db->query('SELECT id_etiqueta, nombre FROM etiquetas')) {
+                        if ($etiquetas->num_rows > 0) {
+                           while ($etiqueta = $etiquetas->fetch_assoc()) {
+                              $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '">';
+                              $etiquetas_checkboxes .= '<label for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</label><br>';
+                           }
+                        }
+                     }
+                     include('formulary.php');
+                  } else {
+                     $error = "";
+                  }
+               }
+            }
+         }
+      } else if (isset($_GET["publicar_receta"])) {
+         $db->query("UPDATE platos SET estado=TRUE WHERE id_plato='".$_GET["publicar_receta"]."'");
+         header("Location: index.php?recetas_pendientes=1", true);
+      } else if (isset($_GET["despublicar_receta"])) {
+         $db->query("UPDATE platos SET estado=FALSE WHERE id_plato='".$_GET["despublicar_receta"]."'");
+         header("Location: index.php", true);
+      } else if (isset($_GET["eliminar_receta"])) {
+         $db->query("DELETE FROM platos WHERE id_plato='".$_GET["eliminar_receta"]."'");
+         header("Location: index.php?recetas_pendientes=1", true);
+      }else {
          // Listado recetas
          $tabla_recetas = '<div class="w-8/12 mx-auto p-8 px-4 m-5" style="background-color:#fff8ee">
          <table class="table-auto cell-border compact stripe hover order-column" id="admin-table">
             <thead>
                <tr>
-                  <th class="px-4 py-2">Nombre</th> <th class="px-4 py-2">Tipo</th> <th class="px-4 py-2">Duración</th> <th class="px-4 py-2">Dificultad</th> 
+                  <th class="px-4 py-2">Nombre</th> <th class="px-4 py-2">Tipo</th> <th class="px-4 py-2">Duración</th> <th class="px-4 py-2">Dificultad</th> <th class="px-4 py-2">Acción</th> 
                </tr>
             </thead>
             <tbody>
          ';
-         $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo";
+         $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE estado = TRUE";
          if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                while ($plato = $resultado->fetch_assoc()) {
-                  $tabla_recetas .= '<tr><td class="border px-4 py-2">' . $plato["nombre"] . '</td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td><td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td></tr>';
+                  $tabla_recetas .= '<tr><td class="border px-4 py-2">' . $plato["nombre"] . '</td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td><td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
+                  <td><a href="?editar_receta='.$plato["id_plato"].'">Editar</a><br><a href="?despublicar_receta='.$plato["id_plato"].'">Des-publicar</a><br><a href="#" onclick="confirmacion('.$plato["id_plato"].')">Eliminar</a></td></tr>';
                }
                $tabla_recetas .= '
                      </tbody>
@@ -155,6 +232,12 @@ if (isset($_POST["nombre"])) {
 
    </div>
    <script>
+      function confirmacion(idPlato){  
+         var respuesta = confirm("¿Seguro que quieres eliminar la receta?");
+         if (respuesta == true) {
+            window.location.href = window.location.origin + window.location.pathname + '?eliminar_receta='+idPlato;
+         }
+      }
       $(document).ready(function() {
          $('#admin-table').dataTable( {
             "language": {

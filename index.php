@@ -1,6 +1,6 @@
 <?php
 //Conexión con la base de datos
-;$db = new mysqli("localhost", "root", "", "chefmi");;
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     var_dump($db->connect_error);
@@ -22,7 +22,7 @@ if ($resultado = $db->query($query)) {
 
 //Obtenemos los platos para el carrusel
 $platos = array();
-$query = "SELECT id_plato, nombre, descripcion, imagen FROM platos ORDER BY id_plato DESC LIMIT 3";
+$query = "SELECT id_plato, nombre, descripcion, imagen FROM platos WHERE estado = TRUE ORDER BY id_plato DESC LIMIT 3";
 if ($resultado = $db->query($query)) {
     if ($resultado->num_rows > 0) {
         while ($plato = $resultado->fetch_assoc()) {

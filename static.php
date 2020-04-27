@@ -56,6 +56,7 @@
                         $("#cuadro_busqueda").css("background", "#FFF");
                     },
                     success: function(data) {
+                        console.log(data);
                         $("#resultados_busqueda").show();
                         $("#resultados_busqueda").html(data);
                         $("#cuadro_busqueda").css("background", "#FFF");

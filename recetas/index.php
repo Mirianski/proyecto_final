@@ -2,7 +2,7 @@
 $error = '';
 
 //Conexión con la base de datos
-;$db = new mysqli("localhost", "root", "", "chefmi");;
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     $error = $db->connect_error;
@@ -32,9 +32,9 @@ include('static.php');
 <?php
 if (!isset($_GET["receta"])) :
     $platos = array();
-    $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo";
+    $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE estado = TRUE";
     if (isset($_GET["tipo"])) {
-        $query .= " WHERE t.id_tipo=" . $_GET["tipo"];
+        $query .= " AND t.id_tipo=" . $_GET["tipo"];
     }
 
     $page = "1";

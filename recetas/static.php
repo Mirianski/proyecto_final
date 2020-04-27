@@ -6,8 +6,8 @@
     <title>Blog de Chef'Mi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
-    <link rel="stylesheet" href="../src/css/style.css" type="text/css">
-    <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-3.5.0.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../src/css/style.css">
 </head>
 
 <body>
@@ -18,7 +18,7 @@
                 <a class="text-blue-500 hover:text-blue-800" href="../index.php">Inicio</a>
             </li>
             <li class="mr-6 dropdown">
-                <a class="text-blue-500 hover:text-blue-800" href="index.php?">Recetas</a>
+                <a class="text-blue-500 hover:text-blue-800" href="index.php">Recetas</a>
                 <div class="dropdown-content">
                     <?php echo $tipos_li; ?>
                 </div>
@@ -47,13 +47,13 @@
                 if($(this).val().length  < 3) return  $("#resultados_busqueda").html();
                 $.ajax({
                     type: "POST",
-                    url: "../searchRecipes.php",
+                    url: "searchRecipes.php",
                     data: 'keyword=' + $(this).val(),
                     beforeSend: function() {
                         $("#cuadro_busqueda").css("background", "#FFF");
                     },
                     success: function(data) {
-                        console.log("data", data);
+                        console.log(data);
                         $("#resultados_busqueda").show();
                         $("#resultados_busqueda").html(data);
                         $("#cuadro_busqueda").css("background", "#FFF");

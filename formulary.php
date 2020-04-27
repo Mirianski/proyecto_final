@@ -25,40 +25,37 @@ if (isset($_POST['name'])) {
     }
 }
 
-// ;$db = new mysqli("localhost", "root", "", "chefmi");;
-// $db->set_charset("UTF8");
+$db = new mysqli("localhost", "root", "", "chefmi");
+$db->set_charset("UTF8");
 
-// if ($db->connect_error) {
-//    var_dump($db->connect_error);
-//    die;
-// }
-// if(!isset($db)) exit;
-// $tipos_options = '';
-// if ($tipos = $db->query("SELECT * FROM tipos")) {
-//     if ($tipos->num_rows > 0) {
+if ($db->connect_error) {
+   var_dump($db->connect_error);
+   die;
+}
+$tipos_options = '';
+if ($tipos = $db->query("SELECT * FROM tipos")) {
+    if ($tipos->num_rows > 0) {
 
-//         while ($tipo = $tipos->fetch_assoc()) {
-//             $tipos_options .= '<option value=' . $tipo['id_tipo'] . '>' . $tipo['nombre'] . '</option>';
-//         }
+        while ($tipo = $tipos->fetch_assoc()) {
+            $tipos_options .= '<option value=' . $tipo['id_tipo'] . '>' . $tipo['nombre'] . '</option>';
+        }
 
-//         $etiquetas_checkboxes = '';
-//         if ($etiquetas = $db->query('SELECT id_etiqueta, nombre FROM etiquetas')) {
-//             if ($etiquetas->num_rows > 0) {
-//                 while ($etiqueta = $etiquetas->fetch_assoc()) {
-//                     $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '">';
-//                     $etiquetas_checkboxes .= '<label for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</label><br>';
-//                 }
-//             }
-//         }
+        $etiquetas_checkboxes = '';
+        if ($etiquetas = $db->query('SELECT id_etiqueta, nombre FROM etiquetas')) {
+            if ($etiquetas->num_rows > 0) {
+                while ($etiqueta = $etiquetas->fetch_assoc()) {
+                    $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '">';
+                    $etiquetas_checkboxes .= '<label for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</label><br>';
+                }
+            }
+        }
+    } else {
+        $error = "";
+    }
+}
 
-//         include('formulary.php');
-//     } else {
-//         $error = "";
-//     }
-// }
-
-// include('static.php');
-// ?>
+include('static.php');
+?>
 <div id="formulary">
     <h1>¡Envía tu receta!</h1>
     <form action="addRecipes.php" method="post" enctype="multipart/form-data">
@@ -76,7 +73,7 @@ if (isset($_POST['name'])) {
             <label for="tipo">Tipo de Receta:</label></br>
             <select name="tipo" id="tipo" required>
                 <option>Seleccionar</option>
-                <!-- <?php //echo $tipos_options; ?> -->
+                <?php echo $tipos_options; ?>
             </select>
         </div>
 
