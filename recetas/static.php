@@ -6,7 +6,7 @@
     <title>Blog de Chef'Mi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/css/style.css">
 </head>
 
@@ -47,7 +47,7 @@
                 if($(this).val().length  < 3) return  $("#resultados_busqueda").html();
                 $.ajax({
                     type: "POST",
-                    url: "searchRecipes.php",
+                    url: "../searchRecipes.php",
                     data: 'keyword=' + $(this).val(),
                     beforeSend: function() {
                         $("#cuadro_busqueda").css("background", "#FFF");
