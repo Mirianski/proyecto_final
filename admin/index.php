@@ -22,7 +22,7 @@
         }
 
         //Comprobamos que exista un usuario con los datos del formulario
-        $query = "SELECT id_usuario FROM usuarios WHERE username LIKE '".$usuario."' AND password LIKE '".$contra."'";
+        $query = "SELECT id_usuario FROM usuarios WHERE usuario LIKE '".$usuario."' AND contrasenia LIKE '".$contra."'";
         if ($resultado = $db->query($query)) {
             if($resultado->num_rows > 0){
                 $_SESSION["admin_login"] = true;

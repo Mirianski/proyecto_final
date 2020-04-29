@@ -75,6 +75,12 @@ body{
     border: solid 2px rgb(66, 37, 23);
 }
 
+.login{
+    position: absolute;
+    right: 200px;
+    margin: 5px 5px;
+}
+
 
 /*SOCIAL MEDIA*/
 .social {
@@ -242,4 +248,27 @@ body{
 .current_page{
     background-color: #4c2721;
     color: #fff8ee;
+}
+
+
+
+.rating {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+}
+.rating > span{
+  display: inline-block;
+  position: relative;
+  width: 1.1em;
+}
+.rating > span:hover:before,
+.rating > span:hover ~ span:before {
+   content: "\2605";
+   position: absolute;
+   color:#d8c53c
+}
+.rated_span:before{
+    content: "\2605";
+    position: absolute;
+    color:#d8c53c
 }

@@ -1,3 +1,11 @@
+<?php    
+    //Inicializamos el objeto session
+    session_start();
+    if (isset($_GET["cerrar_session"])) {
+        unset($_SESSION["user_login"]);
+        header("Location:index.php", true);
+    }
+?>
 <html>
 
 <head>
@@ -8,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/d2adc97f69.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="src/css/style.css">
@@ -28,6 +37,15 @@
             </li>
             <li class="mr-6">
                 <a class="text-blue-500 hover:text-blue-800" href="formulary.php">Envía tus recetas</a>
+            </li>
+            <li class="mr-6">
+                <div class="login">
+                    <?php if ($_SESSION["user_login"]) : ?>
+                        <a class="text-blue-500 hover:text-blue-800" href="login.php?cerrar_session=1"><i title="Cerrar sesión" class="fa fa-sign-out" aria-hidden="true"></i></a>
+                    <?php else : ?>
+                        <a class="text-blue-500 hover:text-blue-800" href="login.php"><i title="Iniciar sesión" class="fa fa-sign-in" aria-hidden="true"></i></a>
+                    <?php endif; ?>
+                </div>
             </li>
             <li>
                 <div class="buscador">

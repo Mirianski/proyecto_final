@@ -6,8 +6,9 @@ USE chefmi;
 
 CREATE TABLE usuarios(
     id_usuario INT NOT NULL AUTO_INCREMENT,
-    username varchar(30) NOT NULL,
-    password varchar(30) NOT NULL,
+    usuario varchar(30) NOT NULL,
+    contrasenia varchar(30) NOT NULL,
+    tipo varchar(30) NOT NULL,
     PRIMARY KEY (id_usuario));
 
 
@@ -21,6 +22,13 @@ CREATE TABLE etiquetas(
     nombre varchar(30) NOT NULL,
     imagen text NOT NULL,
     PRIMARY KEY (id_etiqueta));
+
+CREATE TABLE votos(
+    id_voto INT NOT NULL AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    voto INT NOT NULL,
+    PRIMARY KEY (id_voto),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario));
 
 CREATE TABLE platos(
     id_plato INT NOT NULL AUTO_INCREMENT,
@@ -46,8 +54,17 @@ CREATE TABLE etiquetas_platos(
     FOREIGN KEY(id_plato) REFERENCES platos(id_plato));
 
 
+CREATE TABLE votos_platos(
+    id_voto INT NOT NULL,
+    id_plato INT NOT NULL,
+    PRIMARY KEY (id_voto, id_plato),
+    FOREIGN KEY(id_voto) REFERENCES votos(id_voto),
+    FOREIGN KEY(id_plato) REFERENCES platos(id_plato));
 
-INSERT INTO usuarios (username, password) VALUES ("chefmi","123456");
+
+INSERT INTO usuarios (usuario, contrasenia, tipo) VALUES ("chefmi","123456", "admin");
+INSERT INTO usuarios (usuario, contrasenia, tipo) VALUES ("usuario_1","123456", "cocinero");
+INSERT INTO usuarios (usuario, contrasenia, tipo) VALUES ("usuario_2","123456", "cocinero");
 
 
 INSERT INTO tipos (nombre) VALUES ("Entrantes");
@@ -165,5 +182,13 @@ INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (1, 23);
 INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (2, 23);
 INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (3, 23);
 INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (4, 23);
+
+
+INSERT INTO votos (id_usuario, voto) VALUES (2, 3);
+INSERT INTO votos (id_usuario, voto) VALUES (2, 2);
+INSERT INTO votos (id_usuario, voto) VALUES (3, 4);
+INSERT INTO votos_platos (id_voto, id_plato) VALUES (1, 1);
+INSERT INTO votos_platos (id_voto, id_plato) VALUES (2, 3);
+INSERT INTO votos_platos (id_voto, id_plato) VALUES (3, 3);
 
 -- Carnes Entrantes Pescados Postres Vegetarianos Veganos Basicos

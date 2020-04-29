@@ -42,7 +42,7 @@ if (!isset($_GET["receta"])) :
     if (!isset($_POST['total'])) {
         $count = $db->query($query)->num_rows;
         $_POST['total'] = round($count / $per_page);
-        if($count / $per_page > round($count / $per_page)) $_POST['total'] ++;
+        if ($count / $per_page > round($count / $per_page)) $_POST['total']++;
     } else {
         if (isset($_POST['pageq']) && $_POST['pageq'] == '<' && $_POST['page'] > 2) {
             $_POST['page']--;
@@ -53,7 +53,7 @@ if (!isset($_GET["receta"])) :
         } else if (isset($_POST['pageq']) && $_POST['pageq'] == '>>') {
             $_POST['page'] = $_POST['total'];
         }
-        $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
+        $page = isset($_POST['page']) ? (int) $_POST['page'] : 1;
     }
 
     $from = ($page - 1) * $per_page;
@@ -72,6 +72,12 @@ if (!isset($_GET["receta"])) :
                     }
                 }
 
+                if ($result = $db->query("SELECT SUM(v.voto)/COUNT(v.voto) as voto FROM platos p JOIN votos_platos vp ON vp.id_plato=p.id_plato JOIN votos v ON v.id_voto=vp.id_voto WHERE p.id_plato =" . $plato['id_plato'])) {
+                    if ($result->num_rows > 0) {
+                        $plato['voto'] = $result->fetch_assoc()['voto'];
+                    }
+                }
+
                 array_push($platos, $plato);
             }
         } else {
@@ -79,7 +85,7 @@ if (!isset($_GET["receta"])) :
         }
     }
 ?>
-    <form action="index.php<?php if(isset($_GET["tipo"])) echo '?tipo='.$_GET["tipo"]; ?>" method="post">
+    <form action="index.php<?php if (isset($_GET["tipo"])) echo '?tipo=' . $_GET["tipo"]; ?>" method="post">
         <div class="w-8/12 mx-auto p-8 px-4">
             <?php if (isset($platos)) foreach ($platos as $plato) : ?>
                 <a href="?receta=<?php echo $plato["id_plato"]; ?>">
@@ -87,14 +93,23 @@ if (!isset($_GET["receta"])) :
                         <div class="h-48 w-48 bg-cover" style="background-image: url('../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>')"></div>
                         <div style="background-color:#fff8ee" class="h-48 relative  border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex-1 justify-between leading-normal">
                             <div class="">
-                                <div class="font-bold text-xl mb-2"><?php echo $plato["nombre"]; ?></div>
+                                <div class="font-bold text-xl mb-2"><?php echo $plato["nombre"]; ?>
+                                    <div class="float-right">
+                                        <?php for ($i = 0; $i < (int) $plato['voto']; $i++) : ?>
+                                            <span class="rated_span">☆</span>
+                                        <?php endfor; ?>
+                                        <?php for ($i = 0; $i < (5 - (int) $plato['voto']); $i++) : ?>
+                                            <span>☆</span>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
                                 <p class="text-gray-700 text-base">
                                     <?php echo $plato["descripcion"]; ?>
                                 </p>
                             </div>
                             <div class="flex items-center float-left m-2 absolute bottom-0 left-0">
                                 <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
-                                    <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>"/>
+                                    <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>" />
                                 <?php endforeach; ?>
                             </div>
                             <div class="flex items-center float-right m-2 absolute bottom-0 right-0">
@@ -111,14 +126,14 @@ if (!isset($_GET["receta"])) :
     <?php endif; ?>
 
     <input type="hidden" name="total" value="<?php echo $_POST['total']; ?>">
-    <input type="hidden" name="page" value="<?php echo isset($_POST['page']) ? (int)$_POST['page'] : 1; ?>">
+    <input type="hidden" name="page" value="<?php echo isset($_POST['page']) ? (int) $_POST['page'] : 1; ?>">
 
-    <?php if (isset($_POST['total']) &&  $_POST['total'] && $_POST['total'] > 1) :?>
+    <?php if (isset($_POST['total']) &&  $_POST['total'] && $_POST['total'] > 1) : ?>
         <div class="text-center text-xl  w-8/12 mx-auto p-8 px-4">
             <input class="p-2" type="submit" name="pageq" value="<<">
             <input class="p-2" type="submit" name="pageq" value="<">
             <?php for ($i = 1; $i <= $_POST['total']; $i++) : ?>
-                <input class="p-2 <?php if(isset($_POST['page']) && $_POST['page'] == $i || !isset($_POST['page']) && $i == 1) echo 'current_page';?>" type="submit" name="page" value="<?php echo $i; ?>">
+                <input class="p-2 <?php if (isset($_POST['page']) && $_POST['page'] == $i || !isset($_POST['page']) && $i == 1) echo 'current_page'; ?>" type="submit" name="page" value="<?php echo $i; ?>">
             <?php endfor; ?>
             <input class="p-2" type="submit" name="pageq" value=">">
             <input class="p-2" type="submit" name="pageq" value=">>">
@@ -146,6 +161,12 @@ if (!isset($_GET["receta"])) :
                         }
                     }
                 }
+
+                if ($result = $db->query("SELECT SUM(v.voto)/COUNT(v.voto) as voto FROM platos p JOIN votos_platos vp ON vp.id_plato=p.id_plato JOIN votos v ON v.id_voto=vp.id_voto WHERE p.id_plato =" . $plato['id_plato'])) {
+                    if ($result->num_rows > 0) {
+                        $plato['voto'] = $result->fetch_assoc()['voto'];
+                    }
+                }
             } else {
                 $error = "No se ha encontrado el plato.";
             }
@@ -156,7 +177,7 @@ if (!isset($_GET["receta"])) :
             <div class="text-center text-5xl">
                 <h1><?php echo $plato["nombre"]; ?><div class="flex items-center float-right m-2">
                         <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
-                            <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>"/>
+                            <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>" />
                         <?php endforeach; ?>
                     </div>
                 </h1>
@@ -172,6 +193,16 @@ if (!isset($_GET["receta"])) :
                 <div class="text-gray-700 px-4 py-2 m-4">
                     <div class="text-gray-700 px-4 py-2 m-4">
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-bg m-2">Nº personas: <?php echo $plato["num_personas"]; ?></span>
+                        <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-bg m-2">
+                            <div>
+                                <?php for ($i = 0; $i < (int) $plato['voto']; $i++) : ?>
+                                    <span class="rated_span">☆</span>
+                                <?php endfor; ?>
+                                <?php for ($i = 0; $i < (5 - (int) $plato['voto']); $i++) : ?>
+                                    <span>☆</span>
+                                <?php endfor; ?>
+                            </div>
+                        </span>
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Categoría: <?php echo $plato["tipo"]; ?></span>
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Tiempo: <?php echo $plato["tiempo"]; ?> min</span>
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Dificultad: <?php echo $plato["dificultad"]; ?>/5</span>
@@ -200,13 +231,38 @@ if (!isset($_GET["receta"])) :
                 <img class="max-w-sm m-2" src="../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>">
             </div> -->
                 </div>
+                <?php if ($_SESSION["user_login"]) : ?>
+                    <h2 class="text-3xl">Valoración</h2>
+                    <div class="flex p-4">
+                        <div class="float-left rating">
+                            <span data-voto="5">☆</span><span data-voto="4">☆</span><span data-voto="3">☆</span><span data-voto="2">☆</span><span data-voto="1">☆</span>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $('.rating span').on('click', function(e) {
+                                e.preventDefault();
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../votoRecipes.php",
+                                    data: {
+                                        voto: $(this).data().voto,
+                                        id_plato: "<?php echo $plato['id_plato'] ?>"
+                                    },
+                                    success: function(data) {
+                                        console.log(data);
+                                        window.location.reload();
+                                    }
+                                });
+                            })
+                        });
+                    </script>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+        </div>
+    <?php endif; ?>
 
 
+    </body>
 
-
-
-        </body>
-
-        </html>
+    </html>
