@@ -1,6 +1,7 @@
 <?php
 //Inicializamos el objeto session
 session_start();
+$mensaje_error = 'No se ha podido realizar el voto';
 if (isset($_POST['voto']) && $_POST['id_plato'] != '') {
     //Conexión con la base de datos
     $db = new mysqli("localhost", "root", "uniroot", "chefmi");
@@ -19,12 +20,34 @@ if (isset($_POST['voto']) && $_POST['id_plato'] != '') {
                 $id_voto = (int) $db->insert_id;
                 $query = "INSERT INTO votos_platos (id_voto, id_plato) VALUES (" . $id_voto . ", " . $_POST['id_plato'] . ")";
                 $result = $db->query($query);
-                echo 'Voto realizado con éxito';
+                if ($result) {
+                    if ($result = $db->query("SELECT SUM(v.voto)/COUNT(v.voto) as voto FROM platos p JOIN votos_platos vp ON vp.id_plato=p.id_plato JOIN votos v ON v.id_voto=vp.id_voto WHERE p.id_plato =" . $_POST['id_plato'])) {
+                        if ($result->num_rows > 0) {
+                            $query = "UPDATE platos SET votos = " . (int) $result->fetch_assoc()['voto'] . " WHERE id_plato =" . $_POST['id_plato'];
+                            $result = $db->query($query);
+                            if ($result) {
+                                echo 'Voto realizado con éxito';
+                            }else{
+                                echo $mensaje_error." 7";
+                            }
+                        }else{
+                            echo $mensaje_error." 6";
+                        }
+                    }else{
+                        echo $mensaje_error." 5";
+                    }
+                }else{
+                    echo $mensaje_error." 4";
+                }
+            }else{
+                echo $mensaje_error." 3";
             }
         } else {
             echo 'Ya has votado esta receta';
         }
+    }else{
+        echo $mensaje_error." 2";
     }
 } else {
-    echo 'No se ha podido realizar el voto';
+    echo $mensaje_error." 1";
 }

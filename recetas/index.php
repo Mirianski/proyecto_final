@@ -32,7 +32,7 @@ include('static.php');
 <?php
 if (!isset($_GET["receta"])) :
     $platos = array();
-    $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE estado = TRUE";
+    $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.imagen, p.dificultad, p.tiempo, p.votos, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE estado = TRUE";
     if (isset($_GET["tipo"])) {
         $query .= " AND t.id_tipo=" . $_GET["tipo"];
     }
@@ -57,7 +57,8 @@ if (!isset($_GET["receta"])) :
     }
 
     $from = ($page - 1) * $per_page;
-    $query .= " LIMIT $from,$per_page";
+    $query .= " ORDER BY p.votos DESC, p.nombre ASC LIMIT $from,$per_page ";
+
     if ($resultado = $db->query($query)) {
         if ($resultado->num_rows > 0) {
             while ($plato = $resultado->fetch_assoc()) {
@@ -69,12 +70,6 @@ if (!isset($_GET["receta"])) :
                         while ($etiqueta = $result->fetch_assoc()) {
                             array_push($plato['etiquetas'], $etiqueta);
                         }
-                    }
-                }
-
-                if ($result = $db->query("SELECT SUM(v.voto)/COUNT(v.voto) as voto FROM platos p JOIN votos_platos vp ON vp.id_plato=p.id_plato JOIN votos v ON v.id_voto=vp.id_voto WHERE p.id_plato =" . $plato['id_plato'])) {
-                    if ($result->num_rows > 0) {
-                        $plato['voto'] = $result->fetch_assoc()['voto'];
                     }
                 }
 
@@ -95,10 +90,10 @@ if (!isset($_GET["receta"])) :
                             <div class="">
                                 <div class="font-bold text-xl mb-2"><?php echo $plato["nombre"]; ?>
                                     <div class="float-right">
-                                        <?php for ($i = 0; $i < (int) $plato['voto']; $i++) : ?>
+                                        <?php for ($i = 0; $i < (int) $plato['votos']; $i++) : ?>
                                             <span class="rated_span">☆</span>
                                         <?php endfor; ?>
-                                        <?php for ($i = 0; $i < (5 - (int) $plato['voto']); $i++) : ?>
+                                        <?php for ($i = 0; $i < (5 - (int) $plato['votos']); $i++) : ?>
                                             <span>☆</span>
                                         <?php endfor; ?>
                                     </div>
@@ -145,7 +140,7 @@ if (!isset($_GET["receta"])) :
     <?php
     if (isset($_GET["receta"])) :
         $platos = array();
-        $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, p.num_personas, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE p.id_plato=" . $_GET["receta"];
+        $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, p.num_personas, p.votos, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE p.id_plato=" . $_GET["receta"];
         if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                 $plato = $resultado->fetch_assoc();
@@ -159,12 +154,6 @@ if (!isset($_GET["receta"])) :
                         while ($etiqueta = $result->fetch_assoc()) {
                             array_push($plato['etiquetas'], $etiqueta);
                         }
-                    }
-                }
-
-                if ($result = $db->query("SELECT SUM(v.voto)/COUNT(v.voto) as voto FROM platos p JOIN votos_platos vp ON vp.id_plato=p.id_plato JOIN votos v ON v.id_voto=vp.id_voto WHERE p.id_plato =" . $plato['id_plato'])) {
-                    if ($result->num_rows > 0) {
-                        $plato['voto'] = $result->fetch_assoc()['voto'];
                     }
                 }
             } else {
@@ -195,10 +184,10 @@ if (!isset($_GET["receta"])) :
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-bg m-2">Nº personas: <?php echo $plato["num_personas"]; ?></span>
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-bg m-2">
                             <div>
-                                <?php for ($i = 0; $i < (int) $plato['voto']; $i++) : ?>
+                                <?php for ($i = 0; $i < (int) $plato['votos']; $i++) : ?>
                                     <span class="rated_span">☆</span>
                                 <?php endfor; ?>
-                                <?php for ($i = 0; $i < (5 - (int) $plato['voto']); $i++) : ?>
+                                <?php for ($i = 0; $i < (5 - (int) $plato['votos']); $i++) : ?>
                                     <span>☆</span>
                                 <?php endfor; ?>
                             </div>

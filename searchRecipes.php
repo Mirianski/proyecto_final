@@ -13,7 +13,7 @@ if (isset($_POST['keyword']) && $_POST['keyword'] != '') {
     if ($platos = $db->query("SELECT * FROM platos WHERE 
     (nombre LIKE '%".$_POST['keyword']."%' OR 
     descripcion LIKE '%".$_POST['keyword']."%' OR 
-    ingredientes LIKE '%".$_POST['keyword']."%' ) AND estado = TRUE")) {
+    ingredientes LIKE '%".$_POST['keyword']."%' ) AND estado = TRUE ORDER BY votos DESC, nombre ASC")) {
         if ($platos->num_rows > 0) {
             $html = '<ul id="country-list">';
             while ($plato = $platos->fetch_assoc()) {
