@@ -12,6 +12,7 @@ if (isset($_GET["cerrar_session"])) {
 // if (isset($_SESSION["admin_login"])) header("Location:addRecipes.php", true);
 
 $error = '';
+$exito = '';
 if (!isset($_GET['registro'])) {
     $titulo = "Inicio de sesión";
     $boton = "Iniciar sesión";
@@ -20,6 +21,10 @@ if (!isset($_GET['registro'])) {
     $titulo = "Nuevo usuario";
     $boton = "Crear usuario";
     $enlace = "<a href='login.php'>Inicio de sesión</a>";
+}
+
+if (isset($_GET['alta'])) {
+    $exito = 'Usuario creado correctamente';
 }
 
 if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
@@ -46,7 +51,7 @@ if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
                     $_SESSION["admin_login"] = true;
                 } else {
                     $_SESSION["user_login"] = $usuario["id_usuario"];
-                    header("Location:index.php");
+                    header("Location:index.php?");
                 }
             } else {
                 $error = "Usuario y/o contraseña incorrectos";
@@ -61,8 +66,8 @@ if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
                 $error = "Ya existe un usuario con estos datos";
             } else {
                 $query = "INSERT INTO usuarios (usuario, contrasenia, tipo) VALUES ('" . $_POST['usuario'] . "','" . $_POST['contrasenia'] . "', 'cocinero')";
-                $usuario = $db->query($query);
-                header("Location:login.php", true);
+                $usuario = $db->query($query);                
+                header("Location:login.php?alta=1");
             }
         } 
     }
@@ -95,6 +100,7 @@ if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
             <input type="password" id="contrasenia" name="contrasenia" required></br>
             <input type="submit" id="inicioSesion" value="<?php echo $boton ?>"></br>
             <p id="mensaje-error"><?php echo $error; ?></p>
+            <p id="mensaje-exito"><?php echo $exito; ?></p>
         </form>
         <?php echo $enlace?></h2>
         
