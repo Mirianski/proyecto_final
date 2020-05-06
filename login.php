@@ -9,7 +9,7 @@
     }
 
     //Comprobamos si el usuario ha iniciado sesión antes
-    if (isset($_SESSION["admin_login"])) header("Location:addRecipes.php", true);
+    // if (isset($_SESSION["admin_login"])) header("Location:addRecipes.php", true);
     
     $error = '';
 
