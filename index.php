@@ -1,6 +1,6 @@
 <?php
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "uniroot", "chefmi");
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     var_dump($db->connect_error);
