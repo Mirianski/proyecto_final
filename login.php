@@ -1,51 +1,72 @@
 <html>
 <?php
-    //Inicializamos el objeto session
-    session_start();
+//Inicializamos el objeto session
+session_start();
 
-    if (isset($_GET["cerrar_session"])) {
-        unset($_SESSION["user_login"]);
-        header("Location:index.php", true);
+if (isset($_GET["cerrar_session"])) {
+    unset($_SESSION["user_login"]);
+    header("Location:index.php", true);
+}
+
+//Comprobamos si el usuario ha iniciado sesión antes
+// if (isset($_SESSION["admin_login"])) header("Location:addRecipes.php", true);
+
+$error = '';
+if (!isset($_GET['registro'])) {
+    $titulo = "Inicio de sesión";
+    $boton = "Iniciar sesión";
+    $enlace = "<a href='?registro=1'>Registro de usuario</a>";
+}else{
+    $titulo = "Nuevo usuario";
+    $boton = "Crear usuario";
+    $enlace = "<a href='login.php'>Inicio de sesión</a>";
+}
+
+if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
+
+    $usuario = $_POST['usuario'];
+    $contra = $_POST['contrasenia'];
+
+    //Conexión con la base de datos
+    $db = new mysqli("localhost", "root", "", "chefmi");
+    $db->set_charset("UTF8");
+    if ($db->connect_error) {
+        var_dump($db->connect_error);
+        die;
     }
 
-    //Comprobamos si el usuario ha iniciado sesión antes
-    // if (isset($_SESSION["admin_login"])) header("Location:addRecipes.php", true);
-    
-    $error = '';
-
-    if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
-
-        $usuario = $_POST['usuario'];
-        $contra = $_POST['contrasenia'];
-
-        //Conexión con la base de datos
-        $db = new mysqli("localhost", "root", "", "chefmi");
-        $db->set_charset("UTF8");
-        if ($db->connect_error) {
-            var_dump($db->connect_error);
-            die;
-        }
-
+    if (!isset($_GET['registro'])) {
         //Comprobamos que exista un usuario con los datos del formulario
-        $query = "SELECT id_usuario, tipo FROM usuarios WHERE usuario LIKE '".$usuario."' AND contrasenia LIKE '".$contra."'";
+        $query = "SELECT id_usuario, tipo FROM usuarios WHERE usuario LIKE '" . $usuario . "' AND contrasenia LIKE '" . $contra . "'";
         if ($usuario = $db->query($query)) {
-            if($usuario->num_rows > 0){
+            if ($usuario->num_rows > 0) {
                 $usuario = $usuario->fetch_assoc();
-                if($usuario["tipo"] == "admin"){
+                if ($usuario["tipo"] == "admin") {
                     header("Location:admin/addRecipes.php");
                     $_SESSION["admin_login"] = true;
-                }
-                else{
+                } else {
                     $_SESSION["user_login"] = $usuario["id_usuario"];
                     header("Location:index.php");
                 }
-            }else{
+            } else {
                 $error = "Usuario y/o contraseña incorrectos";
             }
-        }else{
+        } else {
             $error = "Usuario y/o contraseña incorrectos";
         }
+    } else {
+        $query = "SELECT id_usuario FROM usuarios WHERE usuario LIKE '" . $usuario . "'";
+        if ($usuario = $db->query($query)) {
+            if ($usuario->num_rows > 0) {
+                $error = "Ya existe un usuario con estos datos";
+            } else {
+                $query = "INSERT INTO usuarios (usuario, contrasenia, tipo) VALUES ('" . $_POST['usuario'] . "','" . $_POST['contrasenia'] . "', 'cocinero')";
+                $usuario = $db->query($query);
+                header("Location:login.php", true);
+            }
+        } 
     }
+}
 ?>
 
 <head>
@@ -65,16 +86,18 @@
 <body>
     <div id="cabecera">
     </div>
-    <h2 id="adminBar">Inicio de sesión</h2>
+    <h2 id="adminBar"><?php echo $titulo?></h2>
     <div class="session">
         <form method="post">
             <label for="usuario"> Introduzca su usuario</label></br>
             <input type="text" id="usuario" name="usuario" required></br>
             <label for="contrasenia"> Introduzca su contraseña </label></br>
             <input type="password" id="contrasenia" name="contrasenia" required></br>
-            <input type="submit" id="inicioSesion" value="Iniciar sesión"></br>
+            <input type="submit" id="inicioSesion" value="<?php echo $boton ?>"></br>
             <p id="mensaje-error"><?php echo $error; ?></p>
         </form>
+        <?php echo $enlace?></h2>
+        
     </div>
 </body>
 
