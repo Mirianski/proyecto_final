@@ -1,5 +1,10 @@
 <?php
 $error = '';
+$exito = '';
+
+if (isset($_GET["voto"])) {
+    $exito = 'Votación realizada correctamente!';
+}
 
 //Conexión con la base de datos
 $db = new mysqli("localhost", "root", "", "chefmi");
@@ -140,7 +145,8 @@ if (!isset($_GET["receta"])) :
     <?php
     if (isset($_GET["receta"])) :
         $platos = array();
-        $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, p.num_personas, p.votos, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE p.id_plato=" . $_GET["receta"];
+        $votoUsuario = 0;
+        $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, p.num_personas, p.votos, p.autor, t.nombre AS tipo FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE p.id_plato=" . $_GET["receta"];
         if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                 $plato = $resultado->fetch_assoc();
@@ -148,13 +154,38 @@ if (!isset($_GET["receta"])) :
                 $preparacion = explode('<br />', $plato["preparacion"]);
 
                 if ($result = $db->query("SELECT e.nombre, e.imagen FROM etiquetas e LEFT JOIN etiquetas_platos ep ON ep.id_etiqueta=e.id_etiqueta 
-            LEFT JOIN platos p ON p.id_plato=ep.id_plato WHERE p.id_plato =" . $plato['id_plato'])) {
+                    LEFT JOIN platos p ON p.id_plato=ep.id_plato WHERE p.id_plato =" . $plato['id_plato'])) {
                     if ($result->num_rows > 0) {
                         $plato['etiquetas'] = array();
                         while ($etiqueta = $result->fetch_assoc()) {
                             array_push($plato['etiquetas'], $etiqueta);
                         }
                     }
+                }
+
+                $query = "SELECT v.voto FROM votos v JOIN votos_platos vp ON vp.id_voto=v.id_voto WHERE v.id_usuario=" . $_SESSION["user_login"] . " AND vp.id_plato=" . $plato['id_plato'];
+                if ($voto = $db->query($query)) {
+                    if ($voto->num_rows > 0) {
+                        $votoUsuario = $voto->fetch_assoc()['voto'];
+                    }
+                }
+
+                $num_personas = $plato['num_personas'];
+                if (isset($_POST["comensales"])) {
+                    $num_personas = $_POST["comensales"];
+                }
+                $comensales_options = '';
+                $persona = 'persona';
+                for ($i = 1; $i < 5; $i++) {
+                    if ($i > 1) {
+                        $persona = 'personas';
+                    }
+                    if ($num_personas == $i) {
+                        $selected = 'selected';
+                    } else {
+                        $selected = '';
+                    }
+                    $comensales_options .= '<option value="' . $i . '" ' . $selected . '>' . $i . ' ' . $persona . '</option>';
                 }
             } else {
                 $error = "No se ha encontrado el plato.";
@@ -178,6 +209,9 @@ if (!isset($_GET["receta"])) :
                     <img class="max-w-sm m-2" src="../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>">
                 </div>
             </div>
+            <div class="flex p-4">
+                <p>Publicado por: <b><?php echo $plato['autor'] ?></b></p>
+            </div>
             <div class="block px-4 py-2 mt-2">
                 <div class="text-gray-700 px-4 py-2 m-4">
                     <div class="text-gray-700 px-4 py-2 m-4">
@@ -196,13 +230,31 @@ if (!isset($_GET["receta"])) :
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Tiempo: <?php echo $plato["tiempo"]; ?> min</span>
                         <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Dificultad: <?php echo $plato["dificultad"]; ?>/5</span>
                     </div>
+                    <form action="" method="post">
+                        <label for="comensales">Seleccionar comensales</label>
+                        <select name="comensales" id="comensales" onchange="submit()">
+                            <?php echo $comensales_options; ?>
+                        </select>
+                    </form>
                 </div>
                 <h2 class="text-3xl">Ingredientes</h2>
                 <div class="flex p-4">
                     <div class="text-gray-700 py-2 m-2">
                         <ul class="list-inside list-disc">
                             <?php if (isset($ingredientes)) foreach ($ingredientes as $ingrediente) : ?>
-                                <li><?php echo $ingrediente; ?></li>
+
+                                <li>
+                                    <?php
+                                        if ($num_personas != $plato['num_personas']) {
+                                            preg_match_all('!\d+!', $ingrediente, $matches);
+                                            foreach ($matches[0] as $numero) {
+                                                $nuevo_valor = ($num_personas * $numero) / $plato['num_personas'];
+                                                $ingrediente = str_replace($numero, $nuevo_valor, $ingrediente);
+                                            }
+                                        }
+                                        echo $ingrediente;
+                                    ?>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -222,11 +274,24 @@ if (!isset($_GET["receta"])) :
                 </div>
                 <?php if ($_SESSION["user_login"]) : ?>
                     <h2 class="text-3xl">Valoración</h2>
+
                     <div class="flex p-4">
-                        <div class="float-left rating">
-                            <span data-voto="5">☆</span><span data-voto="4">☆</span><span data-voto="3">☆</span><span data-voto="2">☆</span><span data-voto="1">☆</span>
-                        </div>
+                        <?php if ($votoUsuario == 0) : ?>
+                            <div class="float-left rating">
+                                <span data-voto="5">☆</span><span data-voto="4">☆</span><span data-voto="3">☆</span><span data-voto="2">☆</span><span data-voto="1">☆</span>
+                            </div>
+                        <?php else : ?>
+                            <div>
+                                <?php for ($i = 0; $i < (int) $votoUsuario; $i++) : ?>
+                                    <span class="rated_span">☆</span>
+                                <?php endfor; ?>
+                                <?php for ($i = 0; $i < (5 - (int) $votoUsuario); $i++) : ?>
+                                    <span>☆</span>
+                                <?php endfor; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
+                    <p><?php echo $exito; ?></p>
                     <script>
                         $(document).ready(function() {
                             $('.rating span').on('click', function(e) {
@@ -239,8 +304,7 @@ if (!isset($_GET["receta"])) :
                                         id_plato: "<?php echo $plato['id_plato'] ?>"
                                     },
                                     success: function(data) {
-                                        console.log(data);
-                                        window.location.reload();
+                                        window.location.href = window.location.href + "&voto=1";
                                     }
                                 });
                             })

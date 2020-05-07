@@ -52,19 +52,47 @@ if (isset($_POST["nombre"])) {
       if (isset($file_name) && $file_name != '') {
          move_uploaded_file($file_tmp, $target_dir . $file_name);
       }
+      $query = "SELECT usuario FROM usuarios WHERE id_usuario LIKE '" . $_SESSION["user_login"] . "'";
+      if ($usuario = $db->query($query)) {
+         if ($usuario->num_rows > 0) {
+            $autor = $usuario->fetch_assoc()['usuario'];
 
-      $insert_query = "INSERT INTO platos (id_tipo, nombre, descripcion, ingredientes, preparacion, imagen, dificultad, tiempo, num_personas) 
+            if (!isset($_GET['actualizar_receta'])) {
+               $insert_query = "INSERT INTO platos (id_tipo, nombre, descripcion, ingredientes, preparacion, imagen, dificultad, tiempo, num_personas, autor) 
             VALUES (" . (int) $_POST["tipo"] . ",'" . $_POST["nombre"] . "', '" . $_POST["descripcion"] . "','" . nl2br($_POST["ingredientes"]) . "','" . nl2br($_POST["preparacion"]) . "','" . $file_name . "',
-            " . (int) $_POST["dificultad"] . "," . (int) $_POST["tiempo"] . "," . (int) $_POST["num_personas"] . ")";
-      $result = $db->query($insert_query);
+            " . (int) $_POST["dificultad"] . "," . (int) $_POST["tiempo"] . "," . (int) $_POST["num_personas"] . ",'" . $autor . "')";
+               $result = $db->query($insert_query);
 
-      if ($result) {
-         $id_plato = (int) $db->insert_id;
-         foreach ($_POST["etiquetas"] as $id_etiqueta) {
-            $insert_query = "INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (" . (int) $id_etiqueta . "," . $id_plato . ")";
-            $result = $db->query($insert_query);
+               if ($result) {
+                  $id_plato = (int) $db->insert_id;
+                  foreach ($_POST["etiquetas"] as $id_etiqueta) {
+                     $insert_query = "INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (" . (int) $id_etiqueta . "," . $id_plato . ")";
+                     $result = $db->query($insert_query);
+                  }
+                  header("Location:addRecipes.php", true);
+               }
+            } else {
+               $update_query = "UPDATE  platos SET 
+               id_tipo = " . (int) $_POST["tipo"] . ",
+               nombre = '" . $_POST["nombre"] . "', 
+               descripcion = '" . $_POST["descripcion"] . "', 
+               ingredientes = '" . nl2br($_POST["ingredientes"]) . "', 
+               preparacion = '" . nl2br($_POST["preparacion"]) . "', 
+               dificultad = " . (int) $_POST["dificultad"] . ", 
+               tiempo = " . (int) $_POST["tiempo"] . ", 
+               num_personas = " . (int) $_POST["num_personas"];
+               if ($file_name) $update_query .= "imagen = '" . $file_name . "'";
+               $update_query .= " WHERE id_plato=" . $_GET['actualizar_receta'];
+               $result = $db->query($update_query);
+               if ($result) {
+                  foreach ($_POST["etiquetas"] as $id_etiqueta) {
+                     $insert_query = "INSERT INTO etiquetas_platos (id_etiqueta, id_plato) VALUES (" . (int) $id_etiqueta . "," . $_GET['actualizar_receta'] . ")";
+                     $result = $db->query($insert_query);
+                  }
+                  header("Location:addRecipes.php", true);
+               }
+            }
          }
-         header("Location:addRecipes.php", true);
       }
    } else {
       print_r($errors);
@@ -139,9 +167,9 @@ if (isset($_POST["nombre"])) {
          if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                while ($plato = $resultado->fetch_assoc()) {
-                  $tabla_recetas .= '<tr><td class="border px-4 py-2">' . $plato["nombre"] . '</td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td>
+                  $tabla_recetas .= '<tr><td class="border px-4 py-2"><a href="vistaPrevia.php?receta=' . $plato["id_plato"] . '" target="_blank">' . $plato["nombre"] . '</a></td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td>
                   <td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
-                  <td><a href="?editar_receta='.$plato["id_plato"].'">Editar</a><br><a href="?publicar_receta='.$plato["id_plato"].'">Publicar</a><br><a href="#" onclick="confirmacion('.$plato["id_plato"].')">Eliminar</a></td></tr>';
+                  <td><a href="?editar_receta=' . $plato["id_plato"] . '">Editar</a><br><a href="?publicar_receta=' . $plato["id_plato"] . '">Publicar</a><br><a href="#" onclick="confirmacion(' . $plato["id_plato"] . ')">Eliminar</a></td></tr>';
                }
                $tabla_recetas .= '
                      </tbody>
@@ -154,8 +182,8 @@ if (isset($_POST["nombre"])) {
          }
       } else if (isset($_GET["editar_receta"])) {
 
-         $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, t.nombre AS tipo 
-         FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE id_plato='".$_GET["editar_receta"]."'";
+         $query = "SELECT p.id_plato, p.nombre, p.descripcion, p.ingredientes, p.preparacion, p.imagen, p.dificultad, p.tiempo, p.num_personas, t.nombre AS tipo 
+         FROM platos p JOIN tipos t ON t.id_tipo=p.id_tipo WHERE id_plato='" . $_GET["editar_receta"] . "'";
 
          if ($plato = $db->query($query)) {
             if ($plato->num_rows > 0) {
@@ -165,21 +193,27 @@ if (isset($_POST["nombre"])) {
                   if ($tipos->num_rows > 0) {
 
                      while ($tipo = $tipos->fetch_assoc()) {
-                        if($plato['tipo'] == $tipo['nombre']) $tipos_options .= '<option value=' . $tipo['id_tipo'] . ' selected>' . $tipo['nombre'] . '</option>';
+                        if ($plato['tipo'] == $tipo['nombre']) $tipos_options .= '<option value=' . $tipo['id_tipo'] . ' selected>' . $tipo['nombre'] . '</option>';
                         else $tipos_options .= '<option value=' . $tipo['id_tipo'] . '>' . $tipo['nombre'] . '</option>';
                      }
 
                      $etiquetas_checkboxes = '';
-                     // $plato_etiquetas = $db->query('SELECT id_etiqueta FROM etiquetas_platos WHERE id_plato ="'.$plato['id_plato'].'"'));
-                     // if ($plato_etiquetas->num_rows > 0) {
-                        
-                     //    $plato_etiquetas
-                     // }else $plato_etiquetas = array();
+                     $plato_etiquetas = array();
+                     $etiquetas = $db->query('SELECT id_etiqueta FROM etiquetas_platos WHERE id_plato ="' . $plato['id_plato'] . '"');
+                     if ($etiquetas->num_rows > 0) {
+                        while ($etiqueta = $etiquetas->fetch_assoc()) {
+                           array_push($plato_etiquetas, $etiqueta['id_etiqueta']);
+                        }
+                     }
 
                      if ($etiquetas = $db->query('SELECT id_etiqueta, nombre FROM etiquetas')) {
                         if ($etiquetas->num_rows > 0) {
                            while ($etiqueta = $etiquetas->fetch_assoc()) {
-                              $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '">';
+                              if (!in_array($etiqueta['id_etiqueta'], $plato_etiquetas)) {
+                                 $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '">';
+                              } else {
+                                 $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '" checked>';
+                              }
                               $etiquetas_checkboxes .= '<label for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</label><br>';
                            }
                         }
@@ -192,15 +226,15 @@ if (isset($_POST["nombre"])) {
             }
          }
       } else if (isset($_GET["publicar_receta"])) {
-         $db->query("UPDATE platos SET estado=TRUE WHERE id_plato='".$_GET["publicar_receta"]."'");
+         $db->query("UPDATE platos SET estado=TRUE WHERE id_plato='" . $_GET["publicar_receta"] . "'");
          header("Location: index.php?recetas_pendientes=1", true);
       } else if (isset($_GET["despublicar_receta"])) {
-         $db->query("UPDATE platos SET estado=FALSE WHERE id_plato='".$_GET["despublicar_receta"]."'");
+         $db->query("UPDATE platos SET estado=FALSE WHERE id_plato='" . $_GET["despublicar_receta"] . "'");
          header("Location: index.php", true);
       } else if (isset($_GET["eliminar_receta"])) {
-         $db->query("DELETE FROM platos WHERE id_plato='".$_GET["eliminar_receta"]."'");
-         header("Location: index.php?recetas_pendientes=1", true);
-      }else {
+         $eliminado = $db->query("DELETE FROM platos WHERE id_plato=" . $_GET["eliminar_receta"]);
+         header("Location:index.php?recetas_pendientes=1");
+      } else {
          // Listado recetas
          $tabla_recetas = '<div class="w-8/12 mx-auto p-8 px-4 m-5" style="background-color:#fff8ee">
          <table class="table-auto cell-border compact stripe hover order-column" id="admin-table">
@@ -215,8 +249,8 @@ if (isset($_POST["nombre"])) {
          if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                while ($plato = $resultado->fetch_assoc()) {
-                  $tabla_recetas .= '<tr><td class="border px-4 py-2">' . $plato["nombre"] . '</td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td><td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
-                  <td><a href="?editar_receta='.$plato["id_plato"].'">Editar</a><br><a href="?despublicar_receta='.$plato["id_plato"].'">Des-publicar</a><br><a href="#" onclick="confirmacion('.$plato["id_plato"].')">Eliminar</a></td></tr>';
+                  $tabla_recetas .= '<tr><td class="border px-4 py-2"><a href="vistaPrevia.php?receta=' . $plato["id_plato"] . '" target="_blank">' . $plato["nombre"] . '</a></td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td><td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
+                  <td><a href="?editar_receta=' . $plato["id_plato"] . '">Editar</a><br><a href="?despublicar_receta=' . $plato["id_plato"] . '">Des-publicar</a><br><a href="#" onclick="confirmacion(' . $plato["id_plato"] . ')">Eliminar</a></td></tr>';
                }
                $tabla_recetas .= '
                      </tbody>
@@ -232,18 +266,18 @@ if (isset($_POST["nombre"])) {
 
    </div>
    <script>
-      function confirmacion(idPlato){  
+      function confirmacion(idPlato) {
          var respuesta = confirm("¿Seguro que quieres eliminar la receta?");
          if (respuesta == true) {
-            window.location.href = window.location.origin + window.location.pathname + '?eliminar_receta='+idPlato;
+            window.location.href = window.location.origin + window.location.pathname + '?eliminar_receta=' + idPlato;
          }
       }
       $(document).ready(function() {
-         $('#admin-table').dataTable( {
+         $('#admin-table').dataTable({
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+               "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
             }
-        } );
+         });
       });
    </script>
 </body>
