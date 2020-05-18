@@ -14,7 +14,7 @@
         $contra = $_POST['password'];
 
         //Conexión con la base de datos
-        $db = new mysqli("localhost", "root", "", "chefmi");
+        $db = new mysqli("localhost", "root", "uniroot", "chefmi");
         $db->set_charset("UTF8");
         if ($db->connect_error) {
             var_dump($db->connect_error);
@@ -22,11 +22,16 @@
         }
 
         //Comprobamos que exista un usuario con los datos del formulario
-        $query = "SELECT id_usuario FROM usuarios WHERE usuario LIKE '".$usuario."' AND contrasenia LIKE '".$contra."'";
+        $query = "SELECT tipo FROM usuarios WHERE usuario LIKE '".$usuario."' AND contrasenia LIKE '".$contra."'";
         if ($resultado = $db->query($query)) {
             if($resultado->num_rows > 0){
-                $_SESSION["admin_login"] = true;
-                header("Location:addRecipes.php");
+                $usuario = $resultado->fetch_assoc();
+                if ($usuario["tipo"] == "admin") {
+                    $_SESSION["admin_login"] = true;
+                    header("Location:addRecipes.php");
+                }else{
+                    $error = "Usuario y/o contraseña incorrectos";
+                }
             }else{
                 $error = "Usuario y/o contraseña incorrectos";
             }
@@ -46,7 +51,7 @@
 <body>
     <div id="cabecera">
     </div>
-    <h2 id="adminBar">Inicio de sesión</h2>
+    <h3 id="adminBar">Inicio de sesión</h3>
     <div class="session">
         <form method="post">
             <label for="user"> Introduzca su usuario</label></br>

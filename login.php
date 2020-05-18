@@ -29,11 +29,12 @@ if (isset($_GET['alta'])) {
 
 if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
 
+    if(isset($_POST['email'])) $email = $_POST['email'];
     $usuario = $_POST['usuario'];
     $contra = $_POST['contrasenia'];
 
     //Conexión con la base de datos
-    $db = new mysqli("localhost", "root", "", "chefmi");
+    $db = new mysqli("localhost", "root", "uniroot", "chefmi");
     $db->set_charset("UTF8");
     if ($db->connect_error) {
         var_dump($db->connect_error);
@@ -46,10 +47,7 @@ if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
         if ($usuario = $db->query($query)) {
             if ($usuario->num_rows > 0) {
                 $usuario = $usuario->fetch_assoc();
-                if ($usuario["tipo"] == "admin") {
-                    header("Location:admin/addRecipes.php");
-                    $_SESSION["admin_login"] = true;
-                } else {
+                if ($usuario["tipo"] == "cocinero") {
                     $_SESSION["user_login"] = $usuario["id_usuario"];
                     header("Location:index.php?");
                 }
@@ -60,40 +58,27 @@ if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
             $error = "Usuario y/o contraseña incorrectos";
         }
     } else {
-        $query = "SELECT id_usuario FROM usuarios WHERE usuario LIKE '" . $usuario . "'";
+        $query = "SELECT id_usuario FROM usuarios WHERE usuario LIKE '" . $usuario . "' OR email LIKE '" . $email . "'";
         if ($usuario = $db->query($query)) {
             if ($usuario->num_rows > 0) {
                 $error = "Ya existe un usuario con estos datos";
             } else {
-                $query = "INSERT INTO usuarios (usuario, contrasenia, tipo) VALUES ('" . $_POST['usuario'] . "','" . $_POST['contrasenia'] . "', 'cocinero')";
+                $query = "INSERT INTO usuarios (email, usuario, contrasenia, tipo) VALUES ('" . $email . "','" . $_POST['usuario'] . "','" . $_POST['contrasenia'] . "', 'cocinero')";
                 $usuario = $db->query($query);                
                 header("Location:login.php?alta=1");
             }
         } 
     }
 }
+include('static.php');
 ?>
-
-<head>
-    <meta charset="UTF-8">
-    <meta lang="es">
-    <title>Blog de Chef'Mi</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="src/css/style.css">
-</head>
-
-
-<body>
-    <div id="cabecera">
-    </div>
-    <h2 id="adminBar"><?php echo $titulo?></h2>
+    <h3 id="adminBar"><?php echo $titulo?></h3>
     <div class="session">
         <form method="post">
+            <?php if (isset($_GET['registro'])) : ?>
+                <label for="email"> Introduzca su email</label></br>
+                <input type="email" id="email" name="email" required></br>
+            <?php endif;?>
             <label for="usuario"> Introduzca su usuario</label></br>
             <input type="text" id="usuario" name="usuario" required></br>
             <label for="contrasenia"> Introduzca su contraseña </label></br>
@@ -102,7 +87,9 @@ if (isset($_POST['usuario']) && isset($_POST['contrasenia'])) {
             <p id="mensaje-error"><?php echo $error; ?></p>
             <p id="mensaje-exito"><?php echo $exito; ?></p>
         </form>
-        <?php echo $enlace?></h2>
+        <span><?php echo $enlace?></span>
+        <br><br>
+        <span><a href='recuperar.php' target="_blank">¿Olvidaste tu contraseña?</a></span>
         
     </div>
 </body>

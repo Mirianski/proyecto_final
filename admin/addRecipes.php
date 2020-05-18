@@ -8,7 +8,7 @@ if (!isset($_SESSION["admin_login"])) header("Location:index.php", true);
 $error = '';
 
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "", "chefmi");
+$db = new mysqli("localhost", "root", "uniroot", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
    var_dump($db->connect_error);
@@ -52,7 +52,7 @@ if (isset($_POST["nombre"])) {
       if (isset($file_name) && $file_name != '') {
          move_uploaded_file($file_tmp, $target_dir . $file_name);
       }
-      $query = "SELECT usuario FROM usuarios WHERE id_usuario LIKE '" . $_SESSION["user_login"] . "'";
+      $query = "SELECT usuario FROM usuarios WHERE id_usuario LIKE '" . $_SESSION["admin_login"] . "'";
       if ($usuario = $db->query($query)) {
          if ($usuario->num_rows > 0) {
             $autor = $usuario->fetch_assoc()['usuario'];
@@ -81,7 +81,7 @@ if (isset($_POST["nombre"])) {
                dificultad = " . (int) $_POST["dificultad"] . ", 
                tiempo = " . (int) $_POST["tiempo"] . ", 
                num_personas = " . (int) $_POST["num_personas"];
-               if ($file_name) $update_query .= "imagen = '" . $file_name . "'";
+               if ($file_name) $update_query .= ",imagen = '" . $file_name . "'";
                $update_query .= " WHERE id_plato=" . $_GET['actualizar_receta'];
                $result = $db->query($update_query);
                if ($result) {
@@ -107,10 +107,9 @@ if (isset($_POST["nombre"])) {
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
-
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
    <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-3.5.0.js"></script>
    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
-
    <link rel="stylesheet" href="../src/css/style.css" type="text/css">
 </head>
 
@@ -144,7 +143,7 @@ if (isset($_POST["nombre"])) {
                   if ($etiquetas->num_rows > 0) {
                      while ($etiqueta = $etiquetas->fetch_assoc()) {
                         $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '">';
-                        $etiquetas_checkboxes .= '<label for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</label><br>';
+                        $etiquetas_checkboxes .= '<span for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</span>';
                      }
                   }
                }
@@ -167,9 +166,9 @@ if (isset($_POST["nombre"])) {
          if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                while ($plato = $resultado->fetch_assoc()) {
-                  $tabla_recetas .= '<tr><td class="border px-4 py-2"><a href="vistaPrevia.php?receta=' . $plato["id_plato"] . '" target="_blank">' . $plato["nombre"] . '</a></td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td>
+                  $tabla_recetas .= '<tr><td class="border px-4 py-2"><a id="vista-previa" href="vistaPrevia.php?receta=' . $plato["id_plato"] . '" target="_blank">' . $plato["nombre"] . '</a></td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td>
                   <td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
-                  <td><a href="?editar_receta=' . $plato["id_plato"] . '">Editar</a><br><a href="?publicar_receta=' . $plato["id_plato"] . '">Publicar</a><br><a href="#" onclick="confirmacion(' . $plato["id_plato"] . ')">Eliminar</a></td></tr>';
+                  <td><a id="editar" href="?editar_receta=' . $plato["id_plato"] . '">Editar</a><br><a id="publicar" href="?publicar_receta=' . $plato["id_plato"] . '">Publicar</a><br><a id="eliminar" href="#" onclick="confirmacion(' . $plato["id_plato"] . ')">Eliminar</a></td></tr>';
                }
                $tabla_recetas .= '
                      </tbody>
@@ -214,7 +213,7 @@ if (isset($_POST["nombre"])) {
                               } else {
                                  $etiquetas_checkboxes .= '<input type="checkbox" id="' . $etiqueta['id_etiqueta'] . '" name="etiquetas[]" value="' . $etiqueta['id_etiqueta'] . '" checked>';
                               }
-                              $etiquetas_checkboxes .= '<label for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</label><br>';
+                              $etiquetas_checkboxes .= '<span for="' . $etiqueta['id_etiqueta'] . '">' . $etiqueta['nombre'] . '</span>';
                            }
                         }
                      }
@@ -249,8 +248,8 @@ if (isset($_POST["nombre"])) {
          if ($resultado = $db->query($query)) {
             if ($resultado->num_rows > 0) {
                while ($plato = $resultado->fetch_assoc()) {
-                  $tabla_recetas .= '<tr><td class="border px-4 py-2"><a href="vistaPrevia.php?receta=' . $plato["id_plato"] . '" target="_blank">' . $plato["nombre"] . '</a></td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td><td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
-                  <td><a href="?editar_receta=' . $plato["id_plato"] . '">Editar</a><br><a href="?despublicar_receta=' . $plato["id_plato"] . '">Des-publicar</a><br><a href="#" onclick="confirmacion(' . $plato["id_plato"] . ')">Eliminar</a></td></tr>';
+                  $tabla_recetas .= '<tr><td class="border px-4 py-2"><a id="vista-previa" href="vistaPrevia.php?receta=' . $plato["id_plato"] . '" target="_blank">' . $plato["nombre"] . '</a></td><td class="text-center border px-4 py-2">' . $plato["tipo"] . '</td><td class="text-center border px-4 py-2">' . $plato["tiempo"] . ' min</td><td class="text-center border px-4 py-2">' . $plato["dificultad"] . '/5</td>
+                  <td><a id="editar" href="?editar_receta=' . $plato["id_plato"] . '">Editar</a><br><a id="des-publicar" href="?despublicar_receta=' . $plato["id_plato"] . '">Ocultar</a><br><a id="eliminar" href="#" onclick="confirmacion(' . $plato["id_plato"] . ')">Eliminar</a></td></tr>';
                }
                $tabla_recetas .= '
                      </tbody>

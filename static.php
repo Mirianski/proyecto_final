@@ -47,6 +47,11 @@
                     <?php endif; ?>
                 </div>
             </li>
+            <li class="mr-6">
+                <div class="faq">
+                <a href="faq.php"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                </div>
+            </li>
             <li>
                 <div class="buscador">
                     <input type="text" id="cuadro_busqueda" placeholder="Buscar receta" />
@@ -82,7 +87,7 @@
                 });
             });
             $("#cuadro_busqueda").on('blur',function() {
-                $("#resultados_busqueda").html('');
+                // $("#resultados_busqueda").html('');
             });
         });
     </script>

@@ -17,6 +17,8 @@ if (isset($_GET["cerrar_session"])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://use.fontawesome.com/d2adc97f69.js"></script>
     <link rel="stylesheet" type="text/css" href="../src/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -44,10 +46,17 @@ if (isset($_GET["cerrar_session"])) {
                     <?php endif; ?>
                 </div>
             </li>
+            <li class="mr-6">
+                <div class="faq">
+                <a href="../faq.php"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                </div>
+            </li>
             <li>
                 <div class="buscador">
-                    <input type="text" id="cuadro_busqueda" placeholder="Buscar receta" />
-                    <div id="resultados_busqueda" class="absolute"></div>
+                    <form method="get">
+                        <input type="text" id="cuadro_busqueda" name="keyword" placeholder="Buscar receta" />
+                        <div id="resultados_busqueda" class="absolute"></div>
+                    </form>
                 </div>
             </li>
         </ul>
@@ -79,7 +88,7 @@ if (isset($_GET["cerrar_session"])) {
                 });
             });
             $("#cuadro_busqueda").on('blur', function() {
-                $("#resultados_busqueda").html('');
+                // $("#resultados_busqueda").html('');
             });
         });
     </script>

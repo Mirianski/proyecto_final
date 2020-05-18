@@ -7,27 +7,12 @@ if (isset($_GET["voto"])) {
 }
 
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "", "chefmi");
+$db = new mysqli("localhost", "root", "uniroot", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     $error = $db->connect_error;
     die;
 }
-
-//Desplegable de los tipos de recetas del menú
-$tipos_li = '';
-$query = "SELECT * FROM tipos";
-if ($resultado = $db->query($query)) {
-    if ($resultado->num_rows > 0) {
-        while ($tipo = $resultado->fetch_assoc()) {
-            $tipos_li .= '<a class="text-blue-500 hover:text-blue-800" href="?tipo=' . $tipo['id_tipo'] . '">' . $tipo['nombre'] . '</a>';
-        }
-    } else {
-        $error = '';
-    }
-}
-
-
 ?>
 
 
