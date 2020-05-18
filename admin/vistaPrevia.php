@@ -7,7 +7,7 @@ if (isset($_GET["voto"])) {
 }
 
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "uniroot", "chefmi");
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     $error = $db->connect_error;
@@ -78,109 +78,116 @@ if (isset($_GET["receta"])) :
       </ul> -->
    </nav>
    <div>
-    <div class="container mx-auto p-8 px-4 m-8 border-4 border-solid border-white">
-        <?php if ($error != '') echo $error; ?>
-        <div class="text-center text-5xl">
-            <h1><?php echo $plato["nombre"]; ?><div class="flex items-center float-right m-2">
-                    <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
-                        <img style="width:45px; height:45px" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>" />
-                    <?php endforeach; ?>
-                </div>
-            </h1>
-
-        </div>
-        <div class="flex p-4">
-            <div class="flex-1 block text-gray-700 text-center px-4 py-2"><?php echo $plato["descripcion"]; ?></div>
-            <div class="flex-1 text-gray-700 text-center px-4 py-2">
-                <img class="max-w-sm m-2" src="../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>">
-            </div>
-        </div>
-        <div class="flex p-4">
-            <p>Publicado por: <b><?php echo $plato['autor'] ?></b></p>
-        </div>
-        <div class="block px-4 py-2 mt-2">
-            <div class="text-gray-700 px-4 py-2 m-4">
-                <div class="text-gray-700 px-4 py-2 m-4">
-                    <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-bg m-2">Nº personas: <?php echo $plato["num_personas"]; ?></span>
-                    <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-bg m-2">
-                        <div>
-                            <?php for ($i = 0; $i < (int) $plato['votos']; $i++) : ?>
-                                <span class="rated_span">☆</span>
-                            <?php endfor; ?>
-                            <?php for ($i = 0; $i < (5 - (int) $plato['votos']); $i++) : ?>
-                                <span>☆</span>
-                            <?php endfor; ?>
-                        </div>
-                    </span>
-                    <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Categoría: <?php echo $plato["tipo"]; ?></span>
-                    <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Tiempo: <?php echo $plato["tiempo"]; ?> min</span>
-                    <span style="background-color:#4c2721;color:#fff8ee" class="inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Dificultad: <?php echo $plato["dificultad"]; ?>/5</span>
-                </div>
-            </div>
-            <h2 class="text-3xl">Ingredientes</h2>
-            <div class="flex p-4">
-                <div class="text-gray-700 py-2 m-2">
-                    <ul class="list-inside list-disc">
-                        <?php if (isset($ingredientes)) foreach ($ingredientes as $ingrediente) : ?>
-                            <li><?php echo $ingrediente; ?></li>
+   <div class="recipes-container container mx-auto p-8 px-4 m-8">
+            <?php if ($error != '') echo $error; ?>
+            <div class="text-center text-5xl">
+                <h1><?php echo $plato["nombre"]; ?><div class="flex items-center float-right m-2">
+                        <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
+                            <img class="imagen-etiqueta" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>" />
                         <?php endforeach; ?>
-                    </ul>
+                    </div>
+                </h1>
+
+            </div>
+            <div class="flex p-4">
+                <div class="flex-1 block text-black-700 text-center px-4 py-2"><?php echo $plato["descripcion"]; ?></div>
+                <div class="flex-1 text-black-700 text-center px-4 py-2">
+                    <img class="max-w-sm m-2 recipes-img" src="../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>">
                 </div>
             </div>
-            <h2 class="text-3xl">Preparación</h2>
             <div class="flex p-4">
-                <div class="flex-1 block text-gray-700 px-4 py-2 mt-2">
-                    <!-- <ul class="list-inside list-disc"> -->
-                    <?php if (isset($preparacion)) foreach ($preparacion as $paso) : ?>
-                        <p><?php echo $paso; ?></p>
-                    <?php endforeach; ?>
-                    <!-- </ul> -->
+                <p>Publicado por: <b><?php echo $plato['autor'] ?></b></p>
+            </div>
+            <div class="block px-4 py-2 mt-2">
+                <div class="text-black-700 px-4 py-2 m-4">
+                    <div class="text-black-700 px-4 py-2 m-4">
+                        <span class="etiqueta inline-block rounded-full px-3 py-1 text-bg m-2">Nº personas: <?php echo $plato["num_personas"]; ?></span>
+                        <span class="etiqueta inline-block rounded-full px-3 py-1 text-bg m-2">
+                            <div>
+                                <?php for ($i = 0; $i < (int) $plato['votos']; $i++) : ?>
+                                    <span class="rated_span">☆</span>
+                                <?php endfor; ?>
+                                <?php for ($i = 0; $i < (5 - (int) $plato['votos']); $i++) : ?>
+                                    <span>☆</span>
+                                <?php endfor; ?>
+                            </div>
+                        </span>
+                        <span class="etiqueta inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Categoría: <?php echo $plato["tipo"]; ?></span>
+                        <span class="etiqueta inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Tiempo: <?php echo $plato["tiempo"]; ?> min</span>
+                        <span class="etiqueta inline-block rounded-full px-3 py-1 text-sm m-2 float-right">Dificultad: <?php echo $plato["dificultad"]; ?>/5</span>
+                    </div>
                 </div>
-                <!-- <div class="flex-1 text-gray-700 text-center px-4 py-2">
+                <h2 class="text-3xl">Ingredientes</h2>
+                <div class="flex p-4">
+                    <div class="text-black-700 py-2 m-2">
+                        <ul class="list-inside list-disc">
+                            <?php if (isset($ingredientes)) foreach ($ingredientes as $ingrediente) : ?>
+                                <li>
+                                    <?php echo $ingrediente; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+                <h2 class="text-3xl">Preparación</h2>
+                <div class="flex p-4">
+                    <div class="flex-1 block text-black-700 px-4 py-2 mt-2">
+                        <!-- <ul class="list-inside list-disc"> -->
+                        <?php if (isset($preparacion)) foreach ($preparacion as $paso) : ?>
+                            <?php if(trim($paso) != '') : ?>
+                                <p class="preparacion">- <?php echo $paso; ?></p>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <!-- </ul> -->
+                    </div>
+                    <!-- <div class="flex-1 text-black-700 text-center px-4 py-2">
                 <img class="max-w-sm m-2" src="../uploads/<?php echo $plato["imagen"] ? $plato["imagen"] : 'default.jpg'; ?>">
             </div> -->
-            </div>
-            <?php if ($_SESSION["user_login"]) : ?>
-                <h2 class="text-3xl">Valoración</h2>
-
-                <div class="flex p-4">
-                    <?php if ($votoUsuario == 0) : ?>
-                        <div class="float-left rating">
-                            <span data-voto="5">☆</span><span data-voto="4">☆</span><span data-voto="3">☆</span><span data-voto="2">☆</span><span data-voto="1">☆</span>
-                        </div>
-                    <?php else : ?>
-                        <div>
-                            <?php for ($i = 0; $i < (int) $votoUsuario; $i++) : ?>
-                                <span class="rated_span">☆</span>
-                            <?php endfor; ?>
-                            <?php for ($i = 0; $i < (5 - (int) $votoUsuario); $i++) : ?>
-                                <span>☆</span>
-                            <?php endfor; ?>
-                        </div>
-                    <?php endif; ?>
                 </div>
-                <p><?php echo $exito; ?></p>
-                <script>
-                    $(document).ready(function() {
-                        $('.rating span').on('click', function(e) {
-                            e.preventDefault();
-                            $.ajax({
-                                type: "POST",
-                                url: "../votoRecipes.php",
-                                data: {
-                                    voto: $(this).data().voto,
-                                    id_plato: "<?php echo $plato['id_plato'] ?>"
-                                },
-                                success: function(data) {
-                                    window.location.href = window.location.href + "&voto=1";
-                                }
-                            });
-                        })
-                    });
-                </script>
-            <?php endif; ?>
+
+                <h2 class="text-3xl">Valoración</h2><?php if (isset($_SESSION["user_login"])) : ?>
+                    <div class="flex p-4">
+                        <?php if ($votoUsuario == 0) : ?>
+                            <div class="voto float-left rating inline-block rounded-full px-3 py-1">
+                                <span data-voto="5">☆</span><span data-voto="4">☆</span><span data-voto="3">☆</span><span data-voto="2">☆</span><span data-voto="1">☆</span>
+                            </div>
+                        <?php else : ?>
+                            <div>
+                                <?php for ($i = 0; $i < (int) $votoUsuario; $i++) : ?>
+                                    <span class="rated_span">☆</span>
+                                <?php endfor; ?>
+                                <?php for ($i = 0; $i < (5 - (int) $votoUsuario); $i++) : ?>
+                                    <span>☆</span>
+                                <?php endfor; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <p><?php echo $exito; ?></p>
+                    <script>
+                        $(document).ready(function() {
+                            $('.rating span').on('click', function(e) {
+                                e.preventDefault();
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../votoRecipes.php",
+                                    data: {
+                                        voto: $(this).data().voto,
+                                        id_plato: "<?php echo $plato['id_plato'] ?>"
+                                    },
+                                    success: function(data) {
+                                        window.location.href = window.location.href + "&voto=1";
+                                    }
+                                });
+                            })
+                        });
+                    </script>
+                <?php else : ?>
+                    <div class="flex p-4">
+                        <p>Para poder enviar tu receta tienes que estar registrado <a style="text-decoration:underline;" href="../login.php">Iniciar sesión</a></p>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
 <?php endif; ?>
 
 

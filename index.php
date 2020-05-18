@@ -1,6 +1,6 @@
 <?php
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "uniroot", "chefmi");
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     var_dump($db->connect_error);
@@ -15,6 +15,7 @@ if ($resultado = $db->query($query)) {
         while ($tipo = $resultado->fetch_assoc()) {
             $tipos_li .= '<a class="text-blue-500 hover:text-blue-800" href="recetas/index.php?tipo=' . $tipo['id_tipo'] . '">' . $tipo['nombre'] . '</a>';
         }
+        $tipos_li .= '<hr>';
         $query = "SELECT * FROM etiquetas LIMIT 3";
         if ($etiquetas = $db->query($query)) {
             if ($etiquetas->num_rows > 0) {

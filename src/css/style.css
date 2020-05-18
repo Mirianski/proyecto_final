@@ -371,6 +371,10 @@ h1, h2{
 .preparacion{
     text-indent: 30px;
 }
+hr{
+    border-top-width: 2px;
+    border-color: black;
+}
 
 .faq-container{
     margin: auto;

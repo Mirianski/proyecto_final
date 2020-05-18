@@ -7,7 +7,7 @@ if (isset($_GET["voto"])) {
 }
 
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "uniroot", "chefmi");
+$db = new mysqli("localhost", "root", "", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     $error = $db->connect_error;
@@ -22,6 +22,7 @@ if ($resultado = $db->query($query)) {
         while ($tipo = $resultado->fetch_assoc()) {
             $tipos_li .= '<a class="text-blue-500 hover:text-blue-800" href="?tipo=' . $tipo['id_tipo'] . '">' . $tipo['nombre'] . '</a>';
         }
+        $tipos_li .= '<hr>';
         $query = "SELECT * FROM etiquetas LIMIT 3";
         if ($etiquetas = $db->query($query)) {
             if ($etiquetas->num_rows > 0) {
@@ -40,8 +41,6 @@ if ($resultado = $db->query($query)) {
 //Contenido estático de la página
 include('static.php');
 ?>
-
-
 
 <!-- LISTADO DE RECETAS -->
 <?php
@@ -79,17 +78,14 @@ if (!isset($_GET["receta"])) :
         }
         $page = isset($_POST['page']) ? (int) $_POST['page'] : 1;
     }
-
     $from = ($page - 1) * $per_page;
     if (!isset($_GET["etiqueta"])) {
         $query .= " ORDER BY p.votos DESC, p.nombre ASC LIMIT $from,$per_page ";
     }
-
     if ($resultado = $db->query($query)) {
         if ($resultado->num_rows > 0) {
             while ($plato = $resultado->fetch_assoc()) {
-
-                if ($result = $db->query("SELECT e.nombre, e.imagen FROM etiquetas e LEFT JOIN etiquetas_platos ep ON ep.id_etiqueta=e.id_etiqueta 
+                if ($result = $db->query("SELECT e.nombre, e.imagen, e.id_etiqueta FROM etiquetas e LEFT JOIN etiquetas_platos ep ON ep.id_etiqueta=e.id_etiqueta 
                 LEFT JOIN platos p ON p.id_plato=ep.id_plato WHERE p.id_plato =" . $plato['id_plato'])) {
                     if ($result->num_rows > 0) {
                         $plato['etiquetas'] = array();
@@ -98,7 +94,6 @@ if (!isset($_GET["receta"])) :
                         }
                     }
                 }
-
                 array_push($platos, $plato);
             }
         } else {
@@ -139,7 +134,7 @@ if (!isset($_GET["receta"])) :
                             <div class="etiqueta-categoria">
                                 <div class="etiquetas flex items-center float-left m-2 absolute bottom-0 left-0">
                                     <?php if (isset($plato['etiquetas'])) foreach ($plato['etiquetas'] as $etiqueta) : ?>
-                                        <img class="imagen-etiqueta" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>" />
+                                        <a href="?etiqueta=<?php echo $etiqueta["id_etiqueta"]; ?>"><img class="imagen-etiqueta" src="../src/images/<?php echo $etiqueta["imagen"]; ?>" alt="<?php echo $etiqueta["nombre"]; ?>" title="<?php echo $etiqueta["nombre"]; ?>" /></a>
                                     <?php endforeach; ?>
                                 </div>
                                 <div class="categorias flex items-center float-right m-2 absolute bottom-0 right-0">
@@ -156,10 +151,8 @@ if (!isset($_GET["receta"])) :
             <?php if ($error != '') echo $error; ?>
         </div>
     <?php endif; ?>
-
     <input type="hidden" name="total" value="<?php echo $_POST['total']; ?>">
     <input type="hidden" name="page" value="<?php echo isset($_POST['page']) ? (int) $_POST['page'] : 1; ?>">
-
     <?php if (isset($_POST['total']) &&  $_POST['total'] && $_POST['total'] > 1) : ?>
         <div class="text-center text-xl  w-8/12 mx-auto p-8 px-4">
             <input class="p-2" type="submit" name="pageq" value="<<">
@@ -296,7 +289,9 @@ if (!isset($_GET["receta"])) :
                     <div class="flex-1 block text-black-700 px-4 py-2 mt-2">
                         <!-- <ul class="list-inside list-disc"> -->
                         <?php if (isset($preparacion)) foreach ($preparacion as $paso) : ?>
-                            <p class="preparacion">- <?php echo $paso; ?></p>
+                            <?php if(trim($paso) != '') : ?>
+                                <p class="preparacion">- <?php echo $paso; ?></p>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                         <!-- </ul> -->
                     </div>
