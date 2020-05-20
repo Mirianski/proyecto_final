@@ -4,7 +4,7 @@ if (isset($_GET['id']) && isset($_POST['contrasenia'])) {
     if ($_POST['contrasenia'] == $_POST['contrasenia-bis']) {
 
         //Conexión con la base de datos
-        $db = new mysqli("localhost", "root", "", "chefmi");
+        ;$db = new mysqli("localhost", "root", "uniroot", "chefmi");
         $db->set_charset("UTF8");
         if ($db->connect_error) {
             var_dump($db->connect_error);

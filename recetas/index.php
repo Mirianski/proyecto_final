@@ -7,7 +7,7 @@ if (isset($_GET["voto"])) {
 }
 
 //Conexión con la base de datos
-$db = new mysqli("localhost", "root", "", "chefmi");
+;$db = new mysqli("localhost", "root", "uniroot", "chefmi");
 $db->set_charset("UTF8");
 if ($db->connect_error) {
     $error = $db->connect_error;
@@ -307,7 +307,7 @@ if (!isset($_GET["receta"])) :
                                 <span data-voto="5">☆</span><span data-voto="4">☆</span><span data-voto="3">☆</span><span data-voto="2">☆</span><span data-voto="1">☆</span>
                             </div>
                         <?php else : ?>
-                            <div>
+                            <div class="voto inline-block rounded-full px-3 py-1">
                                 <?php for ($i = 0; $i < (int) $votoUsuario; $i++) : ?>
                                     <span class="rated_span">☆</span>
                                 <?php endfor; ?>
